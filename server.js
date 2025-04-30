@@ -1,39 +1,22 @@
-const express = require("express");
-const fetch = require("node-fetch");
+const express = require('express');
+const fetch = require('node-fetch');
 const app = express();
-
 app.use(express.json());
 
-const spiritMessages = [
-  "Trust what you cannot see.",
-  "A new path is opening for you.",
-  "The past has served its purpose.",
-  "Healing is happening.",
-  "Listen to the quiet signs."
-];
+app.post('/webhook', async (req, res) => {
+  const query = req.body.queryResult.queryText; // ✅ FIXED
 
-app.post("/webhook", async (req, res) => {
-  try {
-    const response = await fetch("https://rws-cards-api.herokuapp.com/api/v1/cards/random?n=1");
-    const data = await response.json();
-    const card = data.cards[0];
+  const tarotResponse = await fetch('https://rws-cards-api.herokuapp.com/api/v1/cards/random?n=1');
+  const data = await tarotResponse.json();
+  const card = data.cards[0].name;
 
-    const spiritMessage = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
+  let answer = "The spirits are unclear. Ask again later.";
+  if (card.toLowerCase().includes("yes")) answer = "Yes";
+  else if (card.toLowerCase().includes("no")) answer = "No";
 
-    const result = Card: ${card.name} - ${card.meaning_up}. Spirit says: ${spiritMessage};
-    
-    res.json({
-      fulfillmentText: result
-    });
-  } catch (error) {
-    console.error(error);
-    res.json({
-      fulfillmentText: "The spirits are silent right now. Please try again later."
-    });
-  }
+  res.json({
+    fulfillmentText: The card drawn is: ${card}. Spirit says: ${answer}
+  });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(Server running on port ${PORT});
-});
+app.listen(3000, () => console.log('Server is running on port 3000'));
