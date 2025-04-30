@@ -19,8 +19,9 @@ app.post('/webhook', async (req, res) => {
       answer = "No";
     }
 
+    // Replaced template literal with string concatenation
     res.json({
-      fulfillmentText: The card drawn is: ${card}. Spirit says: ${answer}
+      fulfillmentText: "The card drawn is: " + card + ". Spirit says: " + answer
     });
   } catch (error) {
     console.error("Error fetching tarot card:", error);
