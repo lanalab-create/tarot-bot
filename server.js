@@ -41,11 +41,11 @@ app.post('/webhook', (req, res) => {
   const result = interpret(cards);
 
   res.json({
-    fulfillmentText: Cards: ${cards.join(" - ")}. Answer: ${result.type}. ${result.message}
+    fulfillmentText: 'Cards: ' + cards.join(" - ") + '. Answer: ' + result.type + '. ' + result.message
   });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(Server running on port ${PORT});
+  console.log('Server running on port ' + PORT);
 });
