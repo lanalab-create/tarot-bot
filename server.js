@@ -19,7 +19,6 @@ app.post('/webhook', async (req, res) => {
       answer = "No";
     }
 
-    // Replaced template literal with string concatenation
     res.json({
       fulfillmentText: "The card drawn is: " + card + ". Spirit says: " + answer
     });
@@ -33,5 +32,5 @@ app.post('/webhook', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(Server running on port ${PORT});
+  console.log("Server running on port " + PORT);
 });
