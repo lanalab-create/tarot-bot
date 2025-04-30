@@ -20,25 +20,36 @@ const tarotCards = [
   "Queen of Pentacles", "King of Pentacles"
 ];
 
+// Draw 3 cards randomly
 function drawCards() {
   const shuffled = [...tarotCards].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, 3);
 }
 
-function interpret(cards) {
+// Interpret the cards based on the question
+function interpret(cards, question) {
   const joined = cards.join(" - ").toLowerCase();
+
+  // Check if the question is asking for a "spirit message"
+  if (question.toLowerCase().includes("spirits message") || question.toLowerCase().includes("spirit's message")) {
+    return { type: "Spirits' Message", message: "Trust the journey ahead." };
+  }
+
+  // Check if we have any "Yes" or "No" cards based on the drawn cards
   if (joined.includes("sun") || joined.includes("world") || joined.includes("ace of cups")) {
     return { type: "Yes", message: "The energy is favorable." };
   } else if (joined.includes("tower") || joined.includes("ten of swords") || joined.includes("five of cups")) {
     return { type: "No", message: "The path is blocked for now." };
   } else {
-    return { type: "Spirits' Message", message: "Trust the journey ahead." };
+    // For unclear answers, give guidance message
+    return { type: "Spirits' Message", message: "You have gotten a guidance message for your situation." };
   }
 }
 
 app.post('/webhook', (req, res) => {
+  const queryText = req.body.queryResult.queryText; // User's question
   const cards = drawCards();
-  const result = interpret(cards);
+  const result = interpret(cards, queryText); // Interpret the cards based on the question
 
   res.json({
     fulfillmentText: 'Cards: ' + cards.join(" - ") + '. Answer: ' + result.type + '. ' + result.message
