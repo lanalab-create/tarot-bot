@@ -1,120 +1,126 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
-const app = express();
-const port = process.env.PORT || 3000;
 
+const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 const tarotCardMeanings = {
-  "The Fool": "New beginnings, spontaneity, and a free spirit.",
+  "The Fool": "New beginnings, spontaneity, free spirit.",
   "The Magician": "Manifestation, resourcefulness, power, inspired action.",
-  "The High Priestess": "Intuition, unconscious knowledge, mystery.",
-  "The Empress": "Fertility, beauty, nature, nurturing.",
+  "The High Priestess": "Intuition, sacred knowledge, divine feminine.",
+  "The Empress": "Femininity, beauty, nature, nurturing, abundance.",
   "The Emperor": "Authority, structure, control, fatherhood.",
-  "The Hierophant": "Tradition, spiritual wisdom, religious beliefs.",
+  "The Hierophant": "Tradition, spiritual wisdom, conformity.",
   "The Lovers": "Love, harmony, relationships, choices.",
-  "The Chariot": "Control, willpower, victory, determination.",
-  "Strength": "Courage, persuasion, influence, compassion.",
-  "The Hermit": "Soul-searching, introspection, being alone.",
-  "Wheel of Fortune": "Good luck, karma, life cycles, destiny.",
-  "Justice": "Fairness, truth, law, cause and effect.",
-  "The Hanged Man": "Pause, surrender, letting go, new perspectives.",
+  "The Chariot": "Control, willpower, success, action.",
+  "Strength": "Courage, influence, compassion, inner strength.",
+  "The Hermit": "Soul-searching, introspection, inner guidance.",
+  "Wheel of Fortune": "Luck, karma, destiny, turning point.",
+  "Justice": "Fairness, truth, law, accountability.",
+  "The Hanged Man": "Pause, surrender, letting go, new perspective.",
   "Death": "Endings, transformation, transition.",
   "Temperance": "Balance, moderation, patience, purpose.",
   "The Devil": "Addiction, materialism, playfulness or bondage.",
-  "The Tower": "Sudden upheaval, chaos, revelation, awakening.",
-  "The Star": "Hope, faith, purpose, renewal.",
-  "The Moon": "Illusion, fear, anxiety, subconscious.",
-  "The Sun": "Positivity, fun, warmth, success.",
-  "Judgement": "Reflection, reckoning, awakening.",
-  "The World": "Completion, integration, accomplishment, travel.",
-  "Ace of Wands": "Inspiration, new opportunities, growth.",
-  "Two of Wands": "Future planning, decisions, progress.",
-  "Three of Wands": "Expansion, foresight, overseas opportunities.",
-  "Four of Wands": "Celebration, harmony, homecoming.",
-  "Five of Wands": "Conflict, disagreements, competition.",
-  "Six of Wands": "Success, public recognition, progress.",
-  "Seven of Wands": "Challenge, competition, protection.",
-  "Eight of Wands": "Movement, fast-paced change, action.",
-  "Nine of Wands": "Resilience, courage, persistence.",
-  "Ten of Wands": "Burden, responsibility, hard work.",
-  "Page of Wands": "Exploration, excitement, freedom.",
-  "Knight of Wands": "Energy, passion, inspired action.",
-  "Queen of Wands": "Courage, determination, joy.",
-  "King of Wands": "Natural leader, vision, entrepreneur.",
-  "Ace of Cups": "Love, new feelings, spirituality.",
-  "Two of Cups": "Partnership, attraction, connection.",
-  "Three of Cups": "Friendship, celebration, creativity.",
-  "Four of Cups": "Meditation, apathy, reevaluation.",
-  "Five of Cups": "Loss, grief, disappointment.",
-  "Six of Cups": "Nostalgia, reunion, innocence.",
-  "Seven of Cups": "Opportunities, choices, illusion.",
-  "Eight of Cups": "Disappointment, withdrawal, change.",
+  "The Tower": "Sudden change, upheaval, revelation.",
+  "The Star": "Hope, faith, purpose, renewal, spirituality.",
+  "The Moon": "Illusion, intuition, confusion, subconscious.",
+  "The Sun": "Positivity, fun, warmth, success, vitality.",
+  "Judgement": "Reflection, reckoning, inner calling.",
+  "The World": "Completion, achievement, travel, celebration.",
+
+  "Ace of Cups": "New feelings, spirituality, intuition.",
+  "Two of Cups": "Unified love, partnership, mutual attraction.",
+  "Three of Cups": "Celebration, friendship, creativity.",
+  "Four of Cups": "Meditation, apathy, contemplation.",
+  "Five of Cups": "Regret, failure, disappointment.",
+  "Six of Cups": "Reunion, nostalgia, childhood memories.",
+  "Seven of Cups": "Choices, imagination, illusion.",
+  "Eight of Cups": "Disappointment, withdrawal, escapism.",
   "Nine of Cups": "Contentment, satisfaction, gratitude.",
-  "Ten of Cups": "Happiness, family, fulfillment.",
-  "Page of Cups": "Imagination, possibilities, sensitivity.",
-  "Knight of Cups": "Romance, charm, idealism.",
-  "Queen of Cups": "Compassion, calm, comfort.",
-  "King of Cups": "Emotional balance, diplomacy.",
-  "Ace of Swords": "Breakthroughs, clarity, new ideas.",
-  "Two of Swords": "Indecision, stalemate, choices.",
-  "Three of Swords": "Heartbreak, sorrow, grief.",
-  "Four of Swords": "Rest, contemplation, recovery.",
-  "Five of Swords": "Conflict, defeat, betrayal.",
-  "Six of Swords": "Transition, change, moving on.",
-  "Seven of Swords": "Deception, trickery, strategy.",
-  "Eight of Swords": "Imprisonment, self-victimization.",
-  "Nine of Swords": "Anxiety, despair, nightmares.",
-  "Ten of Swords": "Ruin, failure, betrayal.",
-  "Page of Swords": "Curiosity, vigilance, ideas.",
-  "Knight of Swords": "Action, speed, assertiveness.",
-  "Queen of Swords": "Perceptive, independent, direct.",
-  "King of Swords": "Intellectual, clear thinking, truth.",
-  "Ace of Pentacles": "Prosperity, opportunity, abundance.",
-  "Two of Pentacles": "Balance, adaptability, time management.",
+  "Ten of Cups": "Harmony, marriage, happiness, alignment.",
+  "Page of Cups": "Creative opportunities, curiosity, possibility.",
+  "Knight of Cups": "Romance, charm, imagination, idealism.",
+  "Queen of Cups": "Compassion, calm, comfort, emotional security.",
+  "King of Cups": "Emotional balance, diplomacy, generosity.",
+
+  "Ace of Pentacles": "New financial or career opportunity.",
+  "Two of Pentacles": "Balance, multitasking, adaptability.",
   "Three of Pentacles": "Teamwork, collaboration, learning.",
-  "Four of Pentacles": "Control, saving, security.",
-  "Five of Pentacles": "Poverty, isolation, worry.",
-  "Six of Pentacles": "Giving, receiving, generosity.",
-  "Seven of Pentacles": "Investment, patience, results.",
-  "Eight of Pentacles": "Skill, development, craftsmanship.",
-  "Nine of Pentacles": "Luxury, self-sufficiency, independence.",
-  "Ten of Pentacles": "Wealth, family, legacy.",
-  "Page of Pentacles": "Ambition, goal setting, study.",
-  "Knight of Pentacles": "Hard work, responsibility, routine.",
-  "Queen of Pentacles": "Nurturing, practicality, security.",
-  "King of Pentacles": "Abundance, prosperity, leadership."
+  "Four of Pentacles": "Saving, control, security, conservatism.",
+  "Five of Pentacles": "Poverty, insecurity, hardship.",
+  "Six of Pentacles": "Giving, receiving, sharing wealth.",
+  "Seven of Pentacles": "Vision, perseverance, profit.",
+  "Eight of Pentacles": "Apprenticeship, repetitive tasks, mastery.",
+  "Nine of Pentacles": "Luxury, self-sufficiency, financial independence.",
+  "Ten of Pentacles": "Wealth, legacy, long-term success.",
+  "Page of Pentacles": "Manifestation, new financial opportunity.",
+  "Knight of Pentacles": "Efficiency, hard work, responsibility.",
+  "Queen of Pentacles": "Nurturing, practicality, providing financially.",
+  "King of Pentacles": "Abundance, security, leadership.",
+
+  "Ace of Wands": "Inspiration, new opportunities, growth.",
+  "Two of Wands": "Planning, decisions, leaving comfort zone.",
+  "Three of Wands": "Progress, foresight, expansion.",
+  "Four of Wands": "Celebration, harmony, homecoming.",
+  "Five of Wands": "Conflict, tension, competition.",
+  "Six of Wands": "Victory, success, public recognition.",
+  "Seven of Wands": "Challenge, competition, perseverance.",
+  "Eight of Wands": "Rapid action, movement, quick decisions.",
+  "Nine of Wands": "Resilience, courage, persistence.",
+  "Ten of Wands": "Burden, responsibility, stress.",
+  "Page of Wands": "Inspiration, discovery, free spirit.",
+  "Knight of Wands": "Energy, passion, inspired action.",
+  "Queen of Wands": "Confidence, independence, determination.",
+  "King of Wands": "Natural leader, vision, honor.",
+
+  "Ace of Swords": "Breakthrough, clarity, new ideas.",
+  "Two of Swords": "Difficult decisions, weighing options.",
+  "Three of Swords": "Heartbreak, grief, emotional pain.",
+  "Four of Swords": "Rest, recovery, contemplation.",
+  "Five of Swords": "Conflict, defeat, mind games.",
+  "Six of Swords": "Transition, change, rite of passage.",
+  "Seven of Swords": "Deception, betrayal, strategy.",
+  "Eight of Swords": "Imprisonment, limitation, fear.",
+  "Nine of Swords": "Anxiety, worry, nightmares.",
+  "Ten of Swords": "Endings, betrayal, loss.",
+  "Page of Swords": "Curiosity, restlessness, mental energy.",
+  "Knight of Swords": "Ambition, action, drive.",
+  "Queen of Swords": "Independence, perception, clear communication.",
+  "King of Swords": "Intellectual power, authority, truth."
 };
 
+// Main function to interpret a tarot draw
 function getResponseFromCards(cards) {
-  let interpretation = cards.map(card => tarotCardMeanings[card] || "Unknown meaning.").join(" ");
+  let interpretation = "";
 
-  // Simple placeholder logic for Yes/No response
-  let outcome = "Yes"; // You can customize this logic based on card types later.
+  cards.forEach((card) => {
+    interpretation += tarotCardMeanings[card] + " ";
+  });
+
+  let outcome = "Yes"; // This logic can be expanded
 
   let response = "";
   if (outcome === "Yes") {
     response = Yes! The cards suggest a favorable outcome: ${interpretation};
   } else {
-    response = No, the cards suggest obstacles may lie ahead: ${interpretation};
+    response = No. The cards suggest obstacles: ${interpretation};
   }
 
   return response;
 }
 
-app.post("/tarot", (req, res) => {
+app.post("/reading", (req, res) => {
   const { cards } = req.body;
-
-  if (!Array.isArray(cards) || cards.length === 0) {
-    return res.status(400).json({ error: "Please provide an array of card names." });
+  if (!cards || !Array.isArray(cards)) {
+    return res.status(400).json({ error: "Invalid cards array" });
   }
 
-  const result = getResponseFromCards(cards);
-  res.json({ result });
+  const response = getResponseFromCards(cards);
+  res.json({ result: response });
 });
 
-app.listen(port, () => {
-  console.log(Tarot bot server running on port ${port});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(Server is running on port ${PORT});
 });
