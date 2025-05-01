@@ -109,7 +109,7 @@ app.get('/tarot', (req, res) => {
   const { question, api_key } = req.query;
   
   // Validate the API key
-  if (api_key !== 'YOUR_API_KEY') {
+  if (api_key !== 'AIzaSyDLzYV3UAPbSyz3EQKCjcY59i0ZgwK0aXQ') {
     return res.status(403).json({ error: 'Unauthorized' });
   }
   
