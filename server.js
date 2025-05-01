@@ -10,7 +10,7 @@ const tarotReading = () => {
     // Your tarot logic here (replace this with the actual tarot card selection logic)
     const outcome = "Yes"; // Example outcome
     const interpretation = "The cards suggest a favorable outcome."; // Example interpretation
-    return ${outcome}. The cards suggest: ${interpretation};
+    return outcome + ". The cards suggest: " + interpretation;
 };
 
 // Define the tarot endpoint
