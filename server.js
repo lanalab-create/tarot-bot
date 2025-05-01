@@ -1,11 +1,11 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
+const app = express();
 
-// Use body parser middleware to parse JSON
+// Middleware
 app.use(bodyParser.json());
 
-// Define card meanings for all 78 Tarot cards
+// All 78 tarot card meanings
 const cardMeanings = {
   "The Fool": "The Fool represents new beginnings, innocence, and taking a leap of faith.",
   "The Magician": "The Magician represents willpower, resourcefulness, and the ability to manifest your goals.",
@@ -29,63 +29,123 @@ const cardMeanings = {
   "The Sun": "The Sun signifies joy, success, and clarity.",
   "Judgment": "Judgment represents resurrection, rebirth, and reflecting on past actions.",
   "The World": "The World signifies completion, achievement, and fulfillment.",
-  // ... All remaining 56 minor arcana cards as you had before
+  "Ace of Wands": "Ace of Wands represents inspiration, new opportunities, and creative potential.",
+  "Two of Wands": "Two of Wands signifies planning, decisions, and progress.",
+  "Three of Wands": "Three of Wands represents expansion, foresight, and growth.",
+  "Four of Wands": "Four of Wands indicates celebration, harmony, and stability, often related to home or relationships.",
+  "Five of Wands": "Five of Wands signifies conflict, competition, and challenges.",
+  "Six of Wands": "Six of Wands represents victory, recognition, and success.",
+  "Seven of Wands": "Seven of Wands symbolizes defense, standing your ground, and perseverance.",
+  "Eight of Wands": "Eight of Wands indicates swift movement, progress, and action.",
+  "Nine of Wands": "Nine of Wands represents resilience, persistence, and protecting what you've built.",
+  "Ten of Wands": "Ten of Wands signifies burden, responsibility, and feeling overwhelmed.",
+  "Page of Wands": "Page of Wands symbolizes enthusiasm, exploration, and new ideas.",
+  "Knight of Wands": "Knight of Wands represents action, adventure, and pursuing one's passions.",
+  "Queen of Wands": "Queen of Wands signifies confidence, charisma, and creative energy.",
+  "King of Wands": "King of Wands symbolizes leadership, vision, and ambition.",
+  "Ace of Cups": "Ace of Cups represents new emotional beginnings, love, and spiritual growth.",
+  "Two of Cups": "Two of Cups signifies partnership, unity, and mutual attraction.",
+  "Three of Cups": "Three of Cups represents celebration, friendship, and community.",
+  "Four of Cups": "Four of Cups signifies introspection, boredom, and contemplation.",
+  "Five of Cups": "Five of Cups represents grief, regret, and focusing on the negative.",
+  "Six of Cups": "Six of Cups symbolizes nostalgia, childhood memories, and innocence.",
+  "Seven of Cups": "Seven of Cups represents choices, illusions, and dreams.",
+  "Eight of Cups": "Eight of Cups signifies leaving behind what no longer serves you and seeking deeper fulfillment.",
+  "Nine of Cups": "Nine of Cups represents emotional contentment, wishes fulfilled, and happiness.",
+  "Ten of Cups": "Ten of Cups symbolizes emotional fulfillment, harmony, and happiness in relationships.",
+  "Page of Cups": "Page of Cups represents creativity, intuition, and emotional exploration.",
+  "Knight of Cups": "Knight of Cups signifies romance, idealism, and following one's heart.",
+  "Queen of Cups": "Queen of Cups represents emotional intelligence, compassion, and nurturing energy.",
+  "King of Cups": "King of Cups symbolizes emotional control, wisdom, and balance in relationships.",
+  "Ace of Swords": "Ace of Swords represents mental clarity, new ideas, and breakthroughs.",
+  "Two of Swords": "Two of Swords signifies difficult decisions, stalemates, and inner conflict.",
+  "Three of Swords": "Three of Swords represents heartbreak, sorrow, and emotional pain.",
+  "Four of Swords": "Four of Swords symbolizes rest, recovery, and contemplation.",
+  "Five of Swords": "Five of Swords represents conflict, defeat, and the need for resolution.",
+  "Six of Swords": "Six of Swords signifies transition, moving on, and leaving the past behind.",
+  "Seven of Swords": "Seven of Swords symbolizes deception, strategy, and secrecy.",
+  "Eight of Swords": "Eight of Swords represents restriction, mental entrapment, and self-imposed limitations.",
+  "Nine of Swords": "Nine of Swords signifies anxiety, worry, and sleepless nights.",
+  "Ten of Swords": "Ten of Swords represents betrayal, painful endings, and hitting rock bottom.",
+  "Page of Swords": "Page of Swords signifies curiosity, intellect, and a thirst for knowledge.",
+  "Knight of Swords": "Knight of Swords represents fast action, assertiveness, and decisive moves.",
+  "Queen of Swords": "Queen of Swords symbolizes clarity, independence, and intellect.",
+  "King of Swords": "King of Swords represents intellect, authority, and strong decision-making.",
+  "Ace of Pentacles": "Ace of Pentacles represents new opportunities for wealth, success, and material gain.",
+  "Two of Pentacles": "Two of Pentacles signifies balance, adaptability, and juggling priorities.",
+  "Three of Pentacles": "Three of Pentacles represents collaboration, teamwork, and building something together.",
+  "Four of Pentacles": "Four of Pentacles symbolizes security, stability, and holding onto resources.",
+  "Five of Pentacles": "Five of Pentacles signifies financial loss, hardship, and feeling excluded.",
+  "Six of Pentacles": "Six of Pentacles represents generosity, balance, and giving/receiving support.",
+  "Seven of Pentacles": "Seven of Pentacles signifies patience, hard work, and waiting for results.",
+  "Eight of Pentacles": "Eight of Pentacles represents skill development, dedication, and craftsmanship.",
+  "Nine of Pentacles": "Nine of Pentacles symbolizes luxury, self-sufficiency, and financial independence.",
+  "Ten of Pentacles": "Ten of Pentacles signifies long-term success, family wealth, and legacy.",
+  "Page of Pentacles": "Page of Pentacles represents ambition, practicality, and new beginnings in finances.",
+  "Knight of Pentacles": "Knight of Pentacles symbolizes hard work, responsibility, and reliability.",
+  "Queen of Pentacles": "Queen of Pentacles represents nurturing, practicality, and financial security.",
+  "King of Pentacles": "King of Pentacles signifies success, wealth, and material mastery."
 };
 
-// Function to interpret the drawn cards
+// Card interpretation logic
 function interpretCards(cards) {
-  return cards.map(card => cardMeanings[card] || "Card interpretation not found.").join(" ");
+  return cards.map(card => cardMeanings[card] || `No meaning found for ${card}.`).join(" ");
 }
 
-// Core tarot logic used in both API and webhook
+// Tarot logic to determine response
 function generateTarotResponse(cards, question) {
-  const interpretation = interpretCards(cards);
-  const lowerQuestion = question.toLowerCase();
+  const interpretation = interpretCards(cards).trim();
 
-  let response = "";
-
-  if (lowerQuestion.includes("will") || lowerQuestion.includes("should")) {
-    if (interpretation.includes("willpower") || interpretation.includes("focus") || interpretation.includes("new opportunities")) {
-      response = `Yes. The cards suggest a favorable outcome: ${interpretation}`;
-    } else if (interpretation.includes("challenges") || interpretation.includes("obstacles") || interpretation.includes("conflict")) {
-      response = `No. The cards suggest challenges or obstacles: ${interpretation}`;
+  const questionLower = question.toLowerCase();
+  if (questionLower.includes("will") || questionLower.includes("should") || questionLower.startsWith("is") || questionLower.startsWith("can")) {
+    if (interpretation.includes("success") || interpretation.includes("joy") || interpretation.includes("victory") || interpretation.includes("opportunities")) {
+      return `Yes. The cards suggest a favorable outcome: ${interpretation}`;
+    } else if (interpretation.includes("conflict") || interpretation.includes("challenges") || interpretation.includes("loss") || interpretation.includes("hardship")) {
+      return `No. The cards suggest obstacles or setbacks: ${interpretation}`;
     } else {
-      response = `You have received a guidance message: ${interpretation}`;
+      return `You received a message of guidance: ${interpretation}`;
     }
-  } else {
-    response = `Your reading is as follows: ${interpretation}`;
   }
 
-  return response;
+  // General question
+  return `Here is your message: ${interpretation}`;
 }
 
-// API endpoint for manual requests
-app.post('/tarot-reading', (req, res) => {
-  const { cards, question } = req.body;
-  const response = generateTarotResponse(cards, question);
-  res.json({ response });
-});
-
-// Dialogflow webhook endpoint
+// Dialogflow webhook
 app.post('/webhook', (req, res) => {
-  const queryResult = req.body.queryResult;
-  const cards = queryResult.parameters.cards || [];
-  const question = queryResult.parameters.question || "What do the spirits want to say?";
+  try {
+    const queryResult = req.body.queryResult;
 
-  const responseText = generateTarotResponse(cards, question);
+    if (!queryResult || !queryResult.parameters) {
+      throw new Error("Missing parameters.");
+    }
 
-  res.json({
-    fulfillmentMessages: [
-      {
-        text: {
-          text: [responseText]
+    const cards = queryResult.parameters.cards || [];
+    const question = queryResult.parameters.question || "";
+
+    if (!Array.isArray(cards) || cards.length === 0) {
+      throw new Error("Card list is empty or not provided.");
+    }
+
+    const responseText = generateTarotResponse(cards, question);
+
+    res.json({
+      fulfillmentMessages: [
+        {
+          text: {
+            text: [responseText]
+          }
         }
-      }
-    ]
-  });
+      ]
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Start the server
-app.listen(3000, () => {
-  console.log("Tarot bot is running on port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Tarot bot is running on port ${PORT}`);
 });
