@@ -1,12 +1,11 @@
-// tarot-webhook.js
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
+const bodyParser = require('body-parser');
 
-// Middleware
+// Use body parser middleware to parse JSON
 app.use(bodyParser.json());
 
-// Define card meanings for all 78 Tarot cards
+// Definir os significados das 78 cartas do Tarô
 const cardMeanings = {
   "The Fool": "The Fool represents new beginnings, innocence, and taking a leap of faith.",
   "The Magician": "The Magician represents willpower, resourcefulness, and the ability to manifest your goals.",
@@ -88,45 +87,53 @@ const cardMeanings = {
   "King of Pentacles": "King of Pentacles signifies success, wealth, and material mastery."
 };
 
-// Interpret function
-function interpretCards(cards) {
-  return cards.map(card => cardMeanings[card] || "No meaning found for this card.").join(' ');
+// Função para sortear 3 cartas aleatórias
+function drawCards() {
+  const allCards = Object.keys(cardMeanings);
+  const drawnCards = [];
+  for (let i = 0; i < 3; i++) {
+    const randomCard = allCards[Math.floor(Math.random() * allCards.length)];
+    drawnCards.push(randomCard);
+  }
+  return drawnCards;
 }
 
-// Webhook route
+// Função para interpretar as cartas sorteadas
+function interpretCards(cards) {
+  let interpretation = cards.map(card => cardMeanings[card] || "Card interpretation not found.").join(" ");
+  return interpretation;
+}
+
+// Definir o webhook endpoint
 app.post('/webhook', (req, res) => {
-  const parameters = req.body.queryResult.parameters;
-  const cards = parameters.cards || [];
-  const question = parameters.question || '';
-
-  const interpretation = interpretCards(cards);
-
-  let response = '';
-  const lowerQuestion = question.toLowerCase();
-
-  if (lowerQuestion.includes("will") || lowerQuestion.includes("should")) {
-    if (interpretation.includes("success") || interpretation.includes("new beginnings") || interpretation.includes("opportunities")) {
-      response = `Yes. The cards suggest a positive outcome: ${interpretation}`;
-    } else if (interpretation.includes("conflict") || interpretation.includes("challenges") || interpretation.includes("pain")) {
-      response = `No. The cards suggest difficulties: ${interpretation}`;
-    } else {
-      response = `You have received a message of spiritual guidance: ${interpretation}`;
-    }
+  const { queryResult } = req.body;
+  const question = queryResult.queryText; // Captura a pergunta do usuário
+  
+  // Sortear 3 cartas
+  const drawnCards = drawCards();
+  
+  // Interpretar as cartas sorteadas
+  const interpretation = interpretCards(drawnCards);
+  
+  // Determinar resposta com base nas cartas
+  let response = "";
+  
+  if (interpretation.includes("willpower") || interpretation.includes("focus") || interpretation.includes("new opportunities")) {
+    response = `Yes. The cards suggest a favorable outcome: ${interpretation}`;
+  } else if (interpretation.includes("challenges") || interpretation.includes("obstacles") || interpretation.includes("conflict")) {
+    response = `No. The cards suggest challenges or obstacles: ${interpretation}`;
   } else {
-    response = `Here is your reading: ${interpretation}`;
+    response = `You have received a guidance message: ${interpretation}`;
   }
 
-  res.json({
-    fulfillmentMessages: [
-      {
-        text: {
-          text: [response]
-        }
-      }
-    ]
+  // Enviar a resposta de volta para o Dialogflow
+  return res.json({
+    fulfillmentText: response,
+    source: "webhook"
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Iniciar o servidor
+app.listen(3000, () => {
+  console.log("Tarot webhook is running on port 3000");
+});
