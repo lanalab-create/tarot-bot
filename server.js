@@ -98,7 +98,7 @@ function getResponseFromCards(cards) {
   }
 
   // Create response
-  let response = ${outcome}. The cards suggest: ${interpretation};
+  let response = `${outcome}. The cards suggest: ${interpretation}`;
 
   return response;
 }
