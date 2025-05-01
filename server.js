@@ -1,3 +1,4 @@
+// tarot-webhook.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -5,7 +6,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
-// All 78 tarot card meanings
+// Define card meanings for all 78 Tarot cards
 const cardMeanings = {
   "The Fool": "The Fool represents new beginnings, innocence, and taking a leap of faith.",
   "The Magician": "The Magician represents willpower, resourcefulness, and the ability to manifest your goals.",
@@ -87,65 +88,45 @@ const cardMeanings = {
   "King of Pentacles": "King of Pentacles signifies success, wealth, and material mastery."
 };
 
-// Card interpretation logic
+// Interpret function
 function interpretCards(cards) {
-  return cards.map(card => cardMeanings[card] || `No meaning found for ${card}.`).join(" ");
+  return cards.map(card => cardMeanings[card] || "No meaning found for this card.").join(' ');
 }
 
-// Tarot logic to determine response
-function generateTarotResponse(cards, question) {
-  const interpretation = interpretCards(cards).trim();
-
-  const questionLower = question.toLowerCase();
-  if (questionLower.includes("will") || questionLower.includes("should") || questionLower.startsWith("is") || questionLower.startsWith("can")) {
-    if (interpretation.includes("success") || interpretation.includes("joy") || interpretation.includes("victory") || interpretation.includes("opportunities")) {
-      return `Yes. The cards suggest a favorable outcome: ${interpretation}`;
-    } else if (interpretation.includes("conflict") || interpretation.includes("challenges") || interpretation.includes("loss") || interpretation.includes("hardship")) {
-      return `No. The cards suggest obstacles or setbacks: ${interpretation}`;
-    } else {
-      return `You received a message of guidance: ${interpretation}`;
-    }
-  }
-
-  // General question
-  return `Here is your message: ${interpretation}`;
-}
-
-// Dialogflow webhook
+// Webhook route
 app.post('/webhook', (req, res) => {
-  try {
-    const queryResult = req.body.queryResult;
+  const parameters = req.body.queryResult.parameters;
+  const cards = parameters.cards || [];
+  const question = parameters.question || '';
 
-    if (!queryResult || !queryResult.parameters) {
-      throw new Error("Missing parameters.");
+  const interpretation = interpretCards(cards);
+
+  let response = '';
+  const lowerQuestion = question.toLowerCase();
+
+  if (lowerQuestion.includes("will") || lowerQuestion.includes("should")) {
+    if (interpretation.includes("success") || interpretation.includes("new beginnings") || interpretation.includes("opportunities")) {
+      response = `Yes. The cards suggest a positive outcome: ${interpretation}`;
+    } else if (interpretation.includes("conflict") || interpretation.includes("challenges") || interpretation.includes("pain")) {
+      response = `No. The cards suggest difficulties: ${interpretation}`;
+    } else {
+      response = `You have received a message of spiritual guidance: ${interpretation}`;
     }
-
-    const cards = queryResult.parameters.cards || [];
-    const question = queryResult.parameters.question || "";
-
-    if (!Array.isArray(cards) || cards.length === 0) {
-      throw new Error("Card list is empty or not provided.");
-    }
-
-    const responseText = generateTarotResponse(cards, question);
-
-    res.json({
-      fulfillmentMessages: [
-        {
-          text: {
-            text: [responseText]
-          }
-        }
-      ]
-    });
-  } catch (err) {
-    console.error("Error:", err);
-    res.status(500).json({ error: err.message });
+  } else {
+    response = `Here is your reading: ${interpretation}`;
   }
+
+  res.json({
+    fulfillmentMessages: [
+      {
+        text: {
+          text: [response]
+        }
+      }
+    ]
+  });
 });
 
-// Start the server
+// Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Tarot bot is running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
