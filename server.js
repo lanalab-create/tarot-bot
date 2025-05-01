@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 // Use body parser middleware to parse JSON
 app.use(bodyParser.json());
 
-// Definir os significados das 78 cartas do Tarô
+// Define the meanings for all 78 tarot cards
 const cardMeanings = {
   "The Fool": "The Fool represents new beginnings, innocence, and taking a leap of faith.",
   "The Magician": "The Magician represents willpower, resourcefulness, and the ability to manifest your goals.",
@@ -87,7 +87,7 @@ const cardMeanings = {
   "King of Pentacles": "King of Pentacles signifies success, wealth, and material mastery."
 };
 
-// Função para sortear 3 cartas aleatórias
+// Function to draw 3 random cards
 function drawCards() {
   const allCards = Object.keys(cardMeanings);
   const drawnCards = [];
@@ -98,24 +98,28 @@ function drawCards() {
   return drawnCards;
 }
 
-// Função para interpretar as cartas sorteadas
+// Function to interpret the drawn cards
 function interpretCards(cards) {
   let interpretation = cards.map(card => cardMeanings[card] || "Card interpretation not found.").join(" ");
   return interpretation;
 }
 
-// Definir o webhook endpoint
-app.post('/webhook', (req, res) => {
-  const { queryResult } = req.body;
-  const question = queryResult.queryText; // Captura a pergunta do usuário
+// Define the GET endpoint for Nightbot
+app.get('/tarot', (req, res) => {
+  const { question, api_key } = req.query;
   
-  // Sortear 3 cartas
+  // Validate the API key
+  if (api_key !== 'YOUR_API_KEY') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  
+  // Draw 3 cards
   const drawnCards = drawCards();
   
-  // Interpretar as cartas sorteadas
+  // Interpret the drawn cards
   const interpretation = interpretCards(drawnCards);
   
-  // Determinar resposta com base nas cartas
+  // Determine the response based on the cards
   let response = "";
   
   if (interpretation.includes("willpower") || interpretation.includes("focus") || interpretation.includes("new opportunities")) {
@@ -126,14 +130,11 @@ app.post('/webhook', (req, res) => {
     response = `You have received a guidance message: ${interpretation}`;
   }
 
-  // Enviar a resposta de volta para o Dialogflow
-  return res.json({
-    fulfillmentText: response,
-    source: "webhook"
-  });
+  // Send the response back to Nightbot
+  res.send(response);
 });
 
-// Iniciar o servidor
+// Start the server
 app.listen(3000, () => {
-  console.log("Tarot webhook is running on port 3000");
+  console.log("Tarot API is running on port 3000");
 });
