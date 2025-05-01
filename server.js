@@ -104,16 +104,16 @@ app.post('/tarot-reading', (req, res) => {
   let response = '';
   if (question.toLowerCase().includes("will") || question.toLowerCase().includes("should")) {
     // For Yes/No questions
-    if (interpretation.includes("willpower") || interpretation.includes("focus") || interpretation.includes("opportunities") || interpretation.includes("success")) {
-      response = Yes. The cards suggest a favorable outcome: ${interpretation};
-    } else if (interpretation.includes("challenges") || interpretation.includes("obstacles") || interpretation.includes("difficulties") || interpretation.includes("burden")) {
-      response = No. The cards suggest challenges or obstacles: ${interpretation};
+    if (interpretation.includes("willpower") || interpretation.includes("focus") || interpretation.includes("new opportunities")) {
+      response = `Yes. The cards suggest a favorable outcome: ${interpretation}`;
+    } else if (interpretation.includes("challenges") || interpretation.includes("obstacles") || interpretation.includes("conflict")) {
+      response = `No. The cards suggest challenges or obstacles: ${interpretation}`;
     } else {
-      response = You have received a guidance message: ${interpretation};
+      response = `You have received a guidance message: ${interpretation}`;
     }
   } else {
     // If it's not a direct Yes/No question
-    response = Your reading is as follows: ${interpretation};
+    response = `Your reading is as follows: ${interpretation}`;
   }
 
   // Return the response as JSON
