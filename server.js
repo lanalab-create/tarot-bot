@@ -113,22 +113,25 @@ app.get('/tarot', (req, res) => {
   const question = req.query.question || '';
   const spirit = req.query.message === 'spirit' || req.query.command === '!spirits';
 
+  if (spirit) {
+  const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
+  res.send(`Spirits' Message: ${msg}`);
+} else {
   const cards = drawCards();
   const answer = yesOrNo();
 
   let reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
 
-  if (spirit) {
+  let response = `${answer}. ${reading}`;
+
+  if (answer === "Maybe") {
     const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
-    res.send(`${reading} Spirits' Message: ${msg}`);
-  } else {
-    let response = `${answer}. ${reading}`;
-    if (answer === "Maybe") {
-      const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
-      response += ` Spirits' Message: ${msg}`;
-    }
-    res.send(response);
+    response += ` Spirits' Message: ${msg}`;
   }
+
+  res.send(response);
+}
+
 });
 
 
