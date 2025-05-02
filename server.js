@@ -1,140 +1,131 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
 
-// Use body parser middleware to parse JSON
-app.use(bodyParser.json());
+const PORT = process.env.PORT || 3000;
 
-// Define the meanings for all 78 tarot cards
-const cardMeanings = {
-  "The Fool": "The Fool represents new beginnings, innocence, and taking a leap of faith.",
-  "The Magician": "The Magician represents willpower, resourcefulness, and the ability to manifest your goals.",
-  "The High Priestess": "The High Priestess symbolizes intuition, mystery, and hidden knowledge.",
-  "The Empress": "The Empress represents fertility, abundance, and nurturing energy.",
-  "The Emperor": "The Emperor symbolizes authority, structure, and control.",
-  "The Hierophant": "The Hierophant represents tradition, wisdom, and spiritual guidance.",
-  "The Lovers": "The Lovers card signifies relationships, choices, and harmony.",
-  "The Chariot": "The Chariot symbolizes determination, focus, and overcoming challenges through hard work.",
-  "Strength": "Strength signifies courage, patience, and inner strength.",
-  "The Hermit": "The Hermit represents introspection, solitude, and seeking inner guidance.",
-  "Wheel of Fortune": "The Wheel of Fortune signifies cycles, change, and destiny.",
-  "Justice": "Justice represents fairness, balance, and truth.",
-  "The Hanged Man": "The Hanged Man signifies suspension, letting go, and seeing things from a new perspective.",
-  "Death": "Death symbolizes transformation, endings, and new beginnings.",
-  "Temperance": "Temperance represents balance, moderation, and harmony.",
-  "The Devil": "The Devil signifies temptation, materialism, and being trapped in negative patterns.",
-  "The Tower": "The Tower symbolizes sudden change, upheaval, and destruction of false structures.",
-  "The Star": "The Star represents hope, inspiration, and renewal.",
-  "The Moon": "The Moon symbolizes illusion, deception, and the unconscious mind.",
-  "The Sun": "The Sun signifies joy, success, and clarity.",
-  "Judgment": "Judgment represents resurrection, rebirth, and reflecting on past actions.",
-  "The World": "The World signifies completion, achievement, and fulfillment.",
-  "Ace of Wands": "Ace of Wands represents inspiration, new opportunities, and creative potential.",
-  "Two of Wands": "Two of Wands signifies planning, decisions, and progress.",
-  "Three of Wands": "Three of Wands represents expansion, foresight, and growth.",
-  "Four of Wands": "Four of Wands indicates celebration, harmony, and stability, often related to home or relationships.",
-  "Five of Wands": "Five of Wands signifies conflict, competition, and challenges.",
-  "Six of Wands": "Six of Wands represents victory, recognition, and success.",
-  "Seven of Wands": "Seven of Wands symbolizes defense, standing your ground, and perseverance.",
-  "Eight of Wands": "Eight of Wands indicates swift movement, progress, and action.",
-  "Nine of Wands": "Nine of Wands represents resilience, persistence, and protecting what you've built.",
-  "Ten of Wands": "Ten of Wands signifies burden, responsibility, and feeling overwhelmed.",
-  "Page of Wands": "Page of Wands symbolizes enthusiasm, exploration, and new ideas.",
-  "Knight of Wands": "Knight of Wands represents action, adventure, and pursuing one's passions.",
-  "Queen of Wands": "Queen of Wands signifies confidence, charisma, and creative energy.",
-  "King of Wands": "King of Wands symbolizes leadership, vision, and ambition.",
-  "Ace of Cups": "Ace of Cups represents new emotional beginnings, love, and spiritual growth.",
-  "Two of Cups": "Two of Cups signifies partnership, unity, and mutual attraction.",
-  "Three of Cups": "Three of Cups represents celebration, friendship, and community.",
-  "Four of Cups": "Four of Cups signifies introspection, boredom, and contemplation.",
-  "Five of Cups": "Five of Cups represents grief, regret, and focusing on the negative.",
-  "Six of Cups": "Six of Cups symbolizes nostalgia, childhood memories, and innocence.",
-  "Seven of Cups": "Seven of Cups represents choices, illusions, and dreams.",
-  "Eight of Cups": "Eight of Cups signifies leaving behind what no longer serves you and seeking deeper fulfillment.",
-  "Nine of Cups": "Nine of Cups represents emotional contentment, wishes fulfilled, and happiness.",
-  "Ten of Cups": "Ten of Cups symbolizes emotional fulfillment, harmony, and happiness in relationships.",
-  "Page of Cups": "Page of Cups represents creativity, intuition, and emotional exploration.",
-  "Knight of Cups": "Knight of Cups signifies romance, idealism, and following one's heart.",
-  "Queen of Cups": "Queen of Cups represents emotional intelligence, compassion, and nurturing energy.",
-  "King of Cups": "King of Cups symbolizes emotional control, wisdom, and balance in relationships.",
-  "Ace of Swords": "Ace of Swords represents mental clarity, new ideas, and breakthroughs.",
-  "Two of Swords": "Two of Swords signifies difficult decisions, stalemates, and inner conflict.",
-  "Three of Swords": "Three of Swords represents heartbreak, sorrow, and emotional pain.",
-  "Four of Swords": "Four of Swords symbolizes rest, recovery, and contemplation.",
-  "Five of Swords": "Five of Swords represents conflict, defeat, and the need for resolution.",
-  "Six of Swords": "Six of Swords signifies transition, moving on, and leaving the past behind.",
-  "Seven of Swords": "Seven of Swords symbolizes deception, strategy, and secrecy.",
-  "Eight of Swords": "Eight of Swords represents restriction, mental entrapment, and self-imposed limitations.",
-  "Nine of Swords": "Nine of Swords signifies anxiety, worry, and sleepless nights.",
-  "Ten of Swords": "Ten of Swords represents betrayal, painful endings, and hitting rock bottom.",
-  "Page of Swords": "Page of Swords signifies curiosity, intellect, and a thirst for knowledge.",
-  "Knight of Swords": "Knight of Swords represents fast action, assertiveness, and decisive moves.",
-  "Queen of Swords": "Queen of Swords symbolizes clarity, independence, and intellect.",
-  "King of Swords": "King of Swords represents intellect, authority, and strong decision-making.",
-  "Ace of Pentacles": "Ace of Pentacles represents new opportunities for wealth, success, and material gain.",
-  "Two of Pentacles": "Two of Pentacles signifies balance, adaptability, and juggling priorities.",
-  "Three of Pentacles": "Three of Pentacles represents collaboration, teamwork, and building something together.",
-  "Four of Pentacles": "Four of Pentacles symbolizes security, stability, and holding onto resources.",
-  "Five of Pentacles": "Five of Pentacles signifies financial loss, hardship, and feeling excluded.",
-  "Six of Pentacles": "Six of Pentacles represents generosity, balance, and giving/receiving support.",
-  "Seven of Pentacles": "Seven of Pentacles signifies patience, hard work, and waiting for results.",
-  "Eight of Pentacles": "Eight of Pentacles represents skill development, dedication, and craftsmanship.",
-  "Nine of Pentacles": "Nine of Pentacles symbolizes luxury, self-sufficiency, and financial independence.",
-  "Ten of Pentacles": "Ten of Pentacles signifies long-term success, family wealth, and legacy.",
-  "Page of Pentacles": "Page of Pentacles represents ambition, practicality, and new beginnings in finances.",
-  "Knight of Pentacles": "Knight of Pentacles symbolizes hard work, responsibility, and reliability.",
-  "Queen of Pentacles": "Queen of Pentacles represents nurturing, practicality, and financial security.",
-  "King of Pentacles": "King of Pentacles signifies success, wealth, and material mastery."
-};
+const tarotCards = [
+  { name: "The Fool", meaning: "new beginnings, spontaneity, and adventures" },
+  { name: "The Magician", meaning: "skill, resourcefulness, and power" },
+  { name: "The High Priestess", meaning: "intuition, secrets, and the subconscious mind" },
+  { name: "The Empress", meaning: "fertility, nurturing, and abundance" },
+  { name: "The Emperor", meaning: "authority, structure, and control" },
+  { name: "The Hierophant", meaning: "tradition, conformity, and spiritual wisdom" },
+  { name: "The Lovers", meaning: "love, harmony, and choices" },
+  { name: "The Chariot", meaning: "determination, victory, and control" },
+  { name: "Strength", meaning: "courage, patience, and inner strength" },
+  { name: "The Hermit", meaning: "soul-searching, solitude, and guidance" },
+  { name: "Wheel of Fortune", meaning: "change, destiny, and cycles" },
+  { name: "Justice", meaning: "truth, fairness, and law" },
+  { name: "The Hanged Man", meaning: "pause, surrender, and new perspectives" },
+  { name: "Death", meaning: "endings, transformation, and transition" },
+  { name: "Temperance", meaning: "balance, moderation, and purpose" },
+  { name: "The Devil", meaning: "addiction, materialism, and bondage" },
+  { name: "The Tower", meaning: "sudden upheaval, chaos, and revelation" },
+  { name: "The Star", meaning: "hope, inspiration, and serenity" },
+  { name: "The Moon", meaning: "illusion, fear, and intuition" },
+  { name: "The Sun", meaning: "joy, success, and vitality" },
+  { name: "Judgement", meaning: "rebirth, inner calling, and absolution" },
+  { name: "The World", meaning: "completion, achievement, and travel" },
+  { name: "Ace of Cups", meaning: "new feelings, love, and intuition" },
+  { name: "Two of Cups", meaning: "partnership, attraction, and unity" },
+  { name: "Three of Cups", meaning: "celebration, friendship, and community" },
+  { name: "Four of Cups", meaning: "contemplation, apathy, and reevaluation" },
+  { name: "Five of Cups", meaning: "loss, grief, and disappointment" },
+  { name: "Six of Cups", meaning: "nostalgia, memories, and childhood" },
+  { name: "Seven of Cups", meaning: "choices, illusion, and wishful thinking" },
+  { name: "Eight of Cups", meaning: "walking away, withdrawal, and introspection" },
+  { name: "Nine of Cups", meaning: "contentment, satisfaction, and wishes" },
+  { name: "Ten of Cups", meaning: "harmony, marriage, and happiness" },
+  { name: "Page of Cups", meaning: "creative opportunities, curiosity, and messages" },
+  { name: "Knight of Cups", meaning: "romance, charm, and imagination" },
+  { name: "Queen of Cups", meaning: "compassion, calm, and comfort" },
+  { name: "King of Cups", meaning: "emotional balance, diplomacy, and generosity" },
+  { name: "Ace of Pentacles", meaning: "prosperity, opportunity, and manifestation" },
+  { name: "Two of Pentacles", meaning: "balance, adaptability, and time management" },
+  { name: "Three of Pentacles", meaning: "teamwork, learning, and collaboration" },
+  { name: "Four of Pentacles", meaning: "control, security, and materialism" },
+  { name: "Five of Pentacles", meaning: "poverty, insecurity, and hardship" },
+  { name: "Six of Pentacles", meaning: "generosity, charity, and sharing" },
+  { name: "Seven of Pentacles", meaning: "patience, investment, and growth" },
+  { name: "Eight of Pentacles", meaning: "skill, development, and hard work" },
+  { name: "Nine of Pentacles", meaning: "abundance, luxury, and self-sufficiency" },
+  { name: "Ten of Pentacles", meaning: "legacy, inheritance, and family" },
+  { name: "Page of Pentacles", meaning: "ambition, diligence, and new ventures" },
+  { name: "Knight of Pentacles", meaning: "efficiency, routine, and responsibility" },
+  { name: "Queen of Pentacles", meaning: "nurturing, practicality, and security" },
+  { name: "King of Pentacles", meaning: "wealth, discipline, and leadership" },
+  { name: "Ace of Swords", meaning: "clarity, truth, and breakthroughs" },
+  { name: "Two of Swords", meaning: "indecision, choices, and blocked emotions" },
+  { name: "Three of Swords", meaning: "heartbreak, sorrow, and grief" },
+  { name: "Four of Swords", meaning: "rest, recovery, and contemplation" },
+  { name: "Five of Swords", meaning: "conflict, betrayal, and loss" },
+  { name: "Six of Swords", meaning: "transition, moving on, and healing" },
+  { name: "Seven of Swords", meaning: "deception, strategy, and stealth" },
+  { name: "Eight of Swords", meaning: "restriction, fear, and helplessness" },
+  { name: "Nine of Swords", meaning: "anxiety, nightmares, and worry" },
+  { name: "Ten of Swords", meaning: "betrayal, endings, and rock bottom" },
+  { name: "Page of Swords", meaning: "curiosity, vigilance, and communication" },
+  { name: "Knight of Swords", meaning: "action, speed, and ambition" },
+  { name: "Queen of Swords", meaning: "perception, independence, and honesty" },
+  { name: "King of Swords", meaning: "intellect, authority, and clarity" },
+  { name: "Ace of Wands", meaning: "inspiration, growth, and potential" },
+  { name: "Two of Wands", meaning: "planning, decisions, and progress" },
+  { name: "Three of Wands", meaning: "expansion, foresight, and confidence" },
+  { name: "Four of Wands", meaning: "celebration, home, and community" },
+  { name: "Five of Wands", meaning: "competition, conflict, and tension" },
+  { name: "Six of Wands", meaning: "victory, recognition, and success" },
+  { name: "Seven of Wands", meaning: "defense, courage, and persistence" },
+  { name: "Eight of Wands", meaning: "speed, momentum, and communication" },
+  { name: "Nine of Wands", meaning: "resilience, fatigue, and determination" },
+  { name: "Ten of Wands", meaning: "burden, responsibility, and stress" },
+  { name: "Page of Wands", meaning: "enthusiasm, discovery, and exploration" },
+  { name: "Knight of Wands", meaning: "passion, adventure, and impulsiveness" },
+  { name: "Queen of Wands", meaning: "confidence, independence, and warmth" },
+  { name: "King of Wands", meaning: "leadership, vision, and honor" }
+];
 
-// Function to draw 3 random cards
-function drawCards() {
-  const allCards = Object.keys(cardMeanings);
-  const drawnCards = [];
-  for (let i = 0; i < 3; i++) {
-    const randomCard = allCards[Math.floor(Math.random() * allCards.length)];
-    drawnCards.push(randomCard);
+function drawCards(n = 3) {
+  const deck = [...tarotCards];
+  const selected = [];
+  for (let i = 0; i < n; i++) {
+    const index = Math.floor(Math.random() * deck.length);
+    selected.push(deck.splice(index, 1)[0]);
   }
-  return drawnCards;
+  return selected;
 }
 
-// Function to interpret the drawn cards
-function interpretCards(cards) {
-  let interpretation = cards.map(card => cardMeanings[card] || "Card interpretation not found.").join(" ");
-  return interpretation;
+function yesOrNo() {
+  const responses = ["Yes", "No", "Maybe"];
+  return responses[Math.floor(Math.random() * responses.length)];
 }
 
-// Define the GET endpoint for Nightbot
 app.get('/tarot', (req, res) => {
-  const { question, api_key } = req.query;
-  
-  // Validate the API key
-  if (api_key !== 'AIzaSyDLzYV3UAPbSyz3EQKCjcY59i0ZgwK0aXQ') {
-    return res.status(403).json({ error: 'Unauthorized' });
-  }
-  
-  // Draw 3 cards
-  const drawnCards = drawCards();
-  
-  // Interpret the drawn cards
-  const interpretation = interpretCards(drawnCards);
-  
-  // Determine the response based on the cards
-  let response = "";
-  
-  if (interpretation.includes("willpower") || interpretation.includes("focus") || interpretation.includes("new opportunities")) {
-    response = `Yes. The cards suggest a favorable outcome: ${interpretation}`;
-  } else if (interpretation.includes("challenges") || interpretation.includes("obstacles") || interpretation.includes("conflict")) {
-    response = `No. The cards suggest challenges or obstacles: ${interpretation}`;
-  } else {
-    response = `You have received a guidance message: ${interpretation}`;
+  const question = req.query.question || '';
+  const wantSpirit = req.query.message === 'spirit';
+
+  const cards = drawCards();
+  const answer = yesOrNo();
+
+  let responseText = `${answer}, ${cards[0].name} is about ${cards[0].meaning}. ${cards[1].name} is about ${cards[1].meaning}. ${cards[2].name} is about ${cards[2].meaning}.`;
+
+  if (wantSpirit || answer === 'Maybe') {
+    const spiritMessages = [
+      "Trust your intuition.",
+      "Let go of what no longer serves you.",
+      "Change is coming, embrace it.",
+      "Focus on what truly matters.",
+      "This is a time for healing and clarity.",
+      "Spirit encourages you to be patient.",
+      "Look inward for the answer you seek.",
+      "The universe is guiding you forward."
+    ];
+    const message = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
+    responseText += ` Spirits' Message: ${message}`;
   }
 
-  // Send the response back to Nightbot
-  res.send(response);
+  res.send(responseText);
 });
 
-// Start the server
-app.listen(3000, () => {
-  console.log("Tarot API is running on port 3000");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
