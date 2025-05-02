@@ -1,10 +1,8 @@
 const express = require('express');
 const app = express();
-
-// Use the PORT from the environment variable (for Render compatibility)
 const PORT = process.env.PORT || 3000;
 
-const tarotCards = [
+const tarotCards = [ /* all 78 cards exactly as you posted */ 
   { name: "The Fool", meaning: "new beginnings, spontaneity, and adventures" },
   { name: "The Magician", meaning: "skill, resourcefulness, and power" },
   { name: "The High Priestess", meaning: "intuition, secrets, and the subconscious mind" },
@@ -100,34 +98,36 @@ function yesOrNo() {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
+const spiritMessages = [
+  "Trust your intuition.",
+  "Let go of what no longer serves you.",
+  "Change is coming, embrace it.",
+  "Focus on what truly matters.",
+  "This is a time for healing and clarity.",
+  "Spirit encourages you to be patient.",
+  "Look inward for the answer you seek.",
+  "The universe is guiding you forward."
+];
+
 app.get('/tarot', (req, res) => {
   const question = req.query.question || '';
-  const wantSpirit = req.query.message === 'spirit';
+  const spirit = req.query.message === 'spirit' || req.query.command === '!spirits';
 
   const cards = drawCards();
   const answer = yesOrNo();
 
-  let responseText = `${answer}, ${cards[0].name} is about ${cards[0].meaning}. ${cards[1].name} is about ${cards[1].meaning}. ${cards[2].name} is about ${cards[2].meaning}.`;
+  let reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
 
-  if (wantSpirit || answer === 'Maybe') {
-    const spiritMessages = [
-      "Trust your intuition.",
-      "Let go of what no longer serves you.",
-      "Change is coming, embrace it.",
-      "Focus on what truly matters.",
-      "This is a time for healing and clarity.",
-      "Spirit encourages you to be patient.",
-      "Look inward for the answer you seek.",
-      "The universe is guiding you forward."
-    ];
-    const message = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
-    responseText += ` Spirits' Message: ${message}`;
+  let response = `${answer}. ${reading}`;
+
+  if (spirit || answer === "Maybe") {
+    const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
+    response += ` Spirits' Message: ${msg}`;
   }
 
-  res.send(responseText);
+  res.send(response);
 });
 
-// Make sure the app listens to the correct port
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Tarot bot running on port ${PORT}`);
 });
