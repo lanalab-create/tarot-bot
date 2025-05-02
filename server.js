@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const tarotCards = [ /* all 78 cards exactly as you posted */ 
+const tarotCards = [ 
   { name: "The Fool", meaning: "new beginnings, spontaneity, and adventures" },
   { name: "The Magician", meaning: "skill, resourcefulness, and power" },
   { name: "The High Priestess", meaning: "intuition, secrets, and the subconscious mind" },
@@ -111,11 +111,19 @@ function yesOrNoFromCards(cards) {
   return "Maybe";
 }
 
+// Updated generateSpiritMessage to shuffle cards and give dynamic messages
 function generateSpiritMessage(cards) {
-  const names = cards.map(c => c.name);
-  return `Spirit draws ${names[0]}, ${names[1]}, and ${names[2]}.
-You are guided beyond the veil—listen to the silence.
-Embrace what is transforming within you.`;
+  const themes = cards.map(card => card.meaning);
+  const messages = [
+    `A shift is occurring within you. Trust the flow of energy around you. Transformation awaits on the other side.`,
+    `The path ahead holds new opportunities for growth and change. Embrace the journey with open arms.`,
+    `Balance is key in your current situation. Look within, for the answers you seek are already there.`,
+    `There's a sense of calm and clarity approaching. Follow the guidance of your inner wisdom as you move forward.`,
+    `You're being encouraged to step beyond fear. There is strength in vulnerability—trust in your resilience.`
+  ];
+  
+  const randomIndex = Math.floor(Math.random() * messages.length);
+  return messages[randomIndex];
 }
 
 app.get('/tarot', (req, res) => {
