@@ -118,15 +118,19 @@ app.get('/tarot', (req, res) => {
 
   let reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
 
-  let response = `${answer}. ${reading}`;
-
-  if (spirit || answer === "Maybe") {
+  if (spirit) {
     const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
-    response += ` Spirits' Message: ${msg}`;
+    res.send(`${reading} Spirits' Message: ${msg}`);
+  } else {
+    let response = `${answer}. ${reading}`;
+    if (answer === "Maybe") {
+      const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
+      response += ` Spirits' Message: ${msg}`;
+    }
+    res.send(response);
   }
-
-  res.send(response);
 });
+
 
 app.listen(PORT, () => {
   console.log(`Tarot bot running on port ${PORT}`);
