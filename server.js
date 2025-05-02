@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -93,53 +93,62 @@ function drawCards(n = 3) {
   return selected;
 }
 
-function yesOrNo() {
-  const responses = ["Yes", "No", "Maybe"];
-  return responses[Math.floor(Math.random() * responses.length)];
+function isYes(card) {
+  const yesCards = ["The Sun", "The World", "The Star", "The Empress", "The Lovers", "Ace of Cups", "Ten of Cups", "Six of Wands", "Nine of Cups", "Judgement"];
+  return yesCards.includes(card.name);
 }
 
-const spiritMessages = [
-  "Trust your intuition.",
-  "Let go of what no longer serves you.",
-  "Change is coming, embrace it.",
-  "Focus on what truly matters.",
-  "This is a time for healing and clarity.",
-  "Spirit encourages you to be patient.",
-  "Look inward for the answer you seek.",
-  "The universe is guiding you forward."
-];
+function isNo(card) {
+  const noCards = ["The Tower", "The Devil", "Ten of Swords", "Three of Swords", "Five of Pentacles", "Eight of Swords", "Nine of Swords", "Death"];
+  return noCards.includes(card.name);
+}
 
-// Handles the !tarot command
+function yesOrNoFromCards(cards) {
+  const yes = cards.filter(isYes).length;
+  const no = cards.filter(isNo).length;
+  if (yes > no) return "Yes";
+  if (no > yes) return "No";
+  return "Maybe";
+}
+
+function generateSpiritMessage(cards) {
+  const names = cards.map(c => c.name);
+  return `Spirit draws ${names[0]}, ${names[1]}, and ${names[2]}.
+You are guided beyond the veil—listen to the silence.
+Embrace what is transforming within you.`;
+}
+
 app.get('/tarot', (req, res) => {
   const question = req.query.question || '';
+  const user = req.query.user || 'friend';
   const spirit = req.query.message === 'spirit' || req.query.command === '!spirits';
 
   if (spirit) {
-    const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
-    res.send(`Spirits' Message: ${msg}`);
+    const cards = drawCards();
+    const message = generateSpiritMessage(cards);
+    res.send(`@${user} \uD83C\uDF1F Spirits' Message:\n${message}`);
   } else {
     const cards = drawCards();
-    const answer = yesOrNo();
+    const answer = yesOrNoFromCards(cards);
 
     let reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
-
-    let response = `${answer}. ${reading}`;
+    let response = `@${user} ${answer}. ${reading}`;
 
     if (answer === "Maybe") {
-      const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
-      response += ` Spirits' Message: ${msg}`;
+      const msg = generateSpiritMessage(cards);
+      response += `\n\uD83C\uDF1F Spirits' Message:\n${msg}`;
     }
 
     res.send(response);
   }
 });
 
-// Handles the !spirits command separately if needed
 app.get('/spirits', (req, res) => {
-  const msg = spiritMessages[Math.floor(Math.random() * spiritMessages.length)];
-  res.send(`Spirits' Message: ${msg}`);
+  const user = req.query.user || 'friend';
+  const cards = drawCards();
+  const message = generateSpiritMessage(cards);
+  res.send(`@${user} \uD83C\uDF1F Spirits' Message:\n${message}`);
 });
-
 
 app.listen(PORT, () => {
   console.log(`Tarot bot running on port ${PORT}`);
