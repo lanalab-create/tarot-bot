@@ -1,22 +1,17 @@
 {
-  "name": "tarot-bot",
+  "name": "tarot-api",
   "version": "1.0.0",
-  "description": "A tarot bot API that responds with tarot card readings",
-  "main": "index.js",
+  "description": "A Tarot API for Nightbot with spirit messages",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.1",
-    "body-parser": "^1.19.0"
+    "express": "^4.18.2"
   },
   "engines": {
     "node": "14.x"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/your-username/tarot-bot"
-  },
-  "author": "Your Name",
-  "license": "MIT"
+  "author": "",
+  "license": "ISC"
 }
