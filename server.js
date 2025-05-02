@@ -140,7 +140,7 @@ app.get('/tarot', (req, res) => {
     const answer = yesOrNoFromCards(cards);
 
     let reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
-    let response = `@${user} ${answer}. ${reading}`;
+    let response = `${answer}. ${reading}`;
 
     if (answer === "Maybe") {
       const msg = generateSpiritMessage(cards);
@@ -150,6 +150,7 @@ app.get('/tarot', (req, res) => {
     res.send(response);
   }
 });
+
 
 app.get('/spirits', (req, res) => {
   const user = req.query.user || 'friend';
