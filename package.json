@@ -1,15 +1,18 @@
 {
-  "name": "tarot-api",
+  "name": "tarot-bot",
   "version": "1.0.0",
-  "description": "Tarot reading API for Nightbot commands",
+  "description": "Tarot and spiritual message API for Nightbot and YouTube Live",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["tarot", "api", "nightbot", "express"],
-  "author": "Your Name",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2"
-  }
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
 }
