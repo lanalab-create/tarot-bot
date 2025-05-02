@@ -1,17 +1,17 @@
 {
-  "name": "tarot-api",
+  "name": "tarot-bot",
   "version": "1.0.0",
-  "description": "A Tarot API for Nightbot with spirit messages",
+  "description": "A simple tarot bot using Express and Tarot API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.17.1"
   },
   "engines": {
     "node": "14.x"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Your Name",
+  "license": "MIT"
 }
