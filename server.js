@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 
+// Use the PORT from the environment variable (for Render compatibility)
 const PORT = process.env.PORT || 3000;
 
 const tarotCards = [
@@ -126,6 +127,7 @@ app.get('/tarot', (req, res) => {
   res.send(responseText);
 });
 
+// Make sure the app listens to the correct port
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
