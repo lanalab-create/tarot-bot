@@ -111,19 +111,19 @@ function yesOrNoFromCards(cards) {
   return "Maybe";
 }
 
-// Updated generateSpiritMessage to shuffle cards and give dynamic messages
 function generateSpiritMessage(cards) {
-  const themes = cards.map(card => card.meaning);
-  const messages = [
-    `A shift is occurring within you. Trust the flow of energy around you. Transformation awaits on the other side.`,
-    `The path ahead holds new opportunities for growth and change. Embrace the journey with open arms.`,
-    `Balance is key in your current situation. Look within, for the answers you seek are already there.`,
-    `There's a sense of calm and clarity approaching. Follow the guidance of your inner wisdom as you move forward.`,
-    `You're being encouraged to step beyond fear. There is strength in vulnerability—trust in your resilience.`
+  const [c1, c2, c3] = cards;
+  const themes = [c1.meaning, c2.meaning, c3.meaning];
+
+  const poeticMessage = [
+    `You pulled ${c1.name}, ${c2.name}, and ${c3.name}.`,
+    `A cycle is unfolding: ${themes[0]}, followed by ${themes[1]}, and finally ${themes[2]}.`,
+    `Let this journey speak: from ${themes[0]} to ${themes[1]}, your spirit grows into ${themes[2]}.`,
+    `Each card holds a whisper — ${c1.name} teaches you ${themes[0]}, ${c2.name} encourages ${themes[1]}, and ${c3.name} completes it with ${themes[2]}.`
   ];
-  
-  const randomIndex = Math.floor(Math.random() * messages.length);
-  return messages[randomIndex];
+
+  const randomIndex = Math.floor(Math.random() * poeticMessage.length);
+  return poeticMessage[randomIndex];
 }
 
 app.get('/tarot', (req, res) => {
@@ -134,7 +134,7 @@ app.get('/tarot', (req, res) => {
   if (spirit) {
     const cards = drawCards();
     const message = generateSpiritMessage(cards);
-    res.send(`@${user} \uD83C\uDF1F Spirits' Message:\n${message}`);
+    res.send(`@${user} ${message}`);
   } else {
     const cards = drawCards();
     const answer = yesOrNoFromCards(cards);
@@ -144,19 +144,18 @@ app.get('/tarot', (req, res) => {
 
     if (answer === "Maybe") {
       const msg = generateSpiritMessage(cards);
-      response += `\n\uD83C\uDF1F Spirits' Message:\n${msg}`;
+      response += `\n✨ ${msg}`;
     }
 
     res.send(response);
   }
 });
 
-
 app.get('/spirits', (req, res) => {
   const user = req.query.user || 'friend';
   const cards = drawCards();
   const message = generateSpiritMessage(cards);
-  res.send(`@${user} \uD83C\uDF1F Spirits' Message:\n${message}`);
+  res.send(`@${user} ${message}`);
 });
 
 app.listen(PORT, () => {
