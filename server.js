@@ -1,86 +1,87 @@
-const express = require('express'); 
+// server.js
+const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const tarotCards = [ 
-  { name: "The Fool", meaning: "new beginnings, spontaneity, and adventures" },
-  { name: "The Magician", meaning: "skill, resourcefulness, and power" },
-  { name: "The High Priestess", meaning: "intuition, secrets, and the subconscious mind" },
-  { name: "The Empress", meaning: "fertility, nurturing, and abundance" },
-  { name: "The Emperor", meaning: "authority, structure, and control" },
-  { name: "The Hierophant", meaning: "tradition, conformity, and spiritual wisdom" },
-  { name: "The Lovers", meaning: "love, harmony, and choices" },
-  { name: "The Chariot", meaning: "determination, victory, and control" },
-  { name: "Strength", meaning: "courage, patience, and inner strength" },
-  { name: "The Hermit", meaning: "soul-searching, solitude, and guidance" },
-  { name: "Wheel of Fortune", meaning: "change, destiny, and cycles" },
-  { name: "Justice", meaning: "truth, fairness, and law" },
-  { name: "The Hanged Man", meaning: "pause, surrender, and new perspectives" },
-  { name: "Death", meaning: "endings, transformation, and transition" },
-  { name: "Temperance", meaning: "balance, moderation, and purpose" },
-  { name: "The Devil", meaning: "addiction, materialism, and bondage" },
-  { name: "The Tower", meaning: "sudden upheaval, chaos, and revelation" },
-  { name: "The Star", meaning: "hope, inspiration, and serenity" },
-  { name: "The Moon", meaning: "illusion, fear, and intuition" },
-  { name: "The Sun", meaning: "joy, success, and vitality" },
-  { name: "Judgement", meaning: "rebirth, inner calling, and absolution" },
-  { name: "The World", meaning: "completion, achievement, and travel" },
-  { name: "Ace of Cups", meaning: "new feelings, love, and intuition" },
-  { name: "Two of Cups", meaning: "partnership, attraction, and unity" },
-  { name: "Three of Cups", meaning: "celebration, friendship, and community" },
-  { name: "Four of Cups", meaning: "contemplation, apathy, and reevaluation" },
-  { name: "Five of Cups", meaning: "loss, grief, and disappointment" },
-  { name: "Six of Cups", meaning: "nostalgia, memories, and childhood" },
-  { name: "Seven of Cups", meaning: "choices, illusion, and wishful thinking" },
-  { name: "Eight of Cups", meaning: "walking away, withdrawal, and introspection" },
-  { name: "Nine of Cups", meaning: "contentment, satisfaction, and wishes" },
-  { name: "Ten of Cups", meaning: "harmony, marriage, and happiness" },
-  { name: "Page of Cups", meaning: "creative opportunities, curiosity, and messages" },
-  { name: "Knight of Cups", meaning: "romance, charm, and imagination" },
-  { name: "Queen of Cups", meaning: "compassion, calm, and comfort" },
-  { name: "King of Cups", meaning: "emotional balance, diplomacy, and generosity" },
-  { name: "Ace of Pentacles", meaning: "prosperity, opportunity, and manifestation" },
-  { name: "Two of Pentacles", meaning: "balance, adaptability, and time management" },
-  { name: "Three of Pentacles", meaning: "teamwork, learning, and collaboration" },
-  { name: "Four of Pentacles", meaning: "control, security, and materialism" },
-  { name: "Five of Pentacles", meaning: "poverty, insecurity, and hardship" },
-  { name: "Six of Pentacles", meaning: "generosity, charity, and sharing" },
-  { name: "Seven of Pentacles", meaning: "patience, investment, and growth" },
-  { name: "Eight of Pentacles", meaning: "skill, development, and hard work" },
-  { name: "Nine of Pentacles", meaning: "abundance, luxury, and self-sufficiency" },
-  { name: "Ten of Pentacles", meaning: "legacy, inheritance, and family" },
-  { name: "Page of Pentacles", meaning: "ambition, diligence, and new ventures" },
-  { name: "Knight of Pentacles", meaning: "efficiency, routine, and responsibility" },
-  { name: "Queen of Pentacles", meaning: "nurturing, practicality, and security" },
-  { name: "King of Pentacles", meaning: "wealth, discipline, and leadership" },
-  { name: "Ace of Swords", meaning: "clarity, truth, and breakthroughs" },
-  { name: "Two of Swords", meaning: "indecision, choices, and blocked emotions" },
-  { name: "Three of Swords", meaning: "heartbreak, sorrow, and grief" },
-  { name: "Four of Swords", meaning: "rest, recovery, and contemplation" },
-  { name: "Five of Swords", meaning: "conflict, betrayal, and loss" },
-  { name: "Six of Swords", meaning: "transition, moving on, and healing" },
-  { name: "Seven of Swords", meaning: "deception, strategy, and stealth" },
-  { name: "Eight of Swords", meaning: "restriction, fear, and helplessness" },
-  { name: "Nine of Swords", meaning: "anxiety, nightmares, and worry" },
-  { name: "Ten of Swords", meaning: "betrayal, endings, and rock bottom" },
-  { name: "Page of Swords", meaning: "curiosity, vigilance, and communication" },
-  { name: "Knight of Swords", meaning: "action, speed, and ambition" },
-  { name: "Queen of Swords", meaning: "perception, independence, and honesty" },
-  { name: "King of Swords", meaning: "intellect, authority, and clarity" },
-  { name: "Ace of Wands", meaning: "inspiration, growth, and potential" },
-  { name: "Two of Wands", meaning: "planning, decisions, and progress" },
-  { name: "Three of Wands", meaning: "expansion, foresight, and confidence" },
-  { name: "Four of Wands", meaning: "celebration, home, and community" },
-  { name: "Five of Wands", meaning: "competition, conflict, and tension" },
-  { name: "Six of Wands", meaning: "victory, recognition, and success" },
-  { name: "Seven of Wands", meaning: "defense, courage, and persistence" },
-  { name: "Eight of Wands", meaning: "speed, momentum, and communication" },
-  { name: "Nine of Wands", meaning: "resilience, fatigue, and determination" },
-  { name: "Ten of Wands", meaning: "burden, responsibility, and stress" },
-  { name: "Page of Wands", meaning: "enthusiasm, discovery, and exploration" },
-  { name: "Knight of Wands", meaning: "passion, adventure, and impulsiveness" },
-  { name: "Queen of Wands", meaning: "confidence, independence, and warmth" },
-  { name: "King of Wands", meaning: "leadership, vision, and honor" }
+const tarotCards = [
+  { name: "The Fool", meaning: "new beginnings, spontaneity, innocence", response: "maybe" },
+  { name: "The Magician", meaning: "manifestation, resourcefulness, power", response: "yes" },
+  { name: "The High Priestess", meaning: "intuition, mystery, the subconscious", response: "maybe" },
+  { name: "The Empress", meaning: "abundance, nurturing, fertility", response: "yes" },
+  { name: "The Emperor", meaning: "authority, structure, control", response: "maybe" },
+  { name: "The Hierophant", meaning: "tradition, conformity, morality", response: "maybe" },
+  { name: "The Lovers", meaning: "partnership, choices, harmony", response: "yes" },
+  { name: "The Chariot", meaning: "determination, victory, control", response: "yes" },
+  { name: "Strength", meaning: "courage, patience, compassion", response: "yes" },
+  { name: "The Hermit", meaning: "soul-searching, introspection, solitude", response: "maybe" },
+  { name: "Wheel of Fortune", meaning: "fate, change, luck", response: "maybe" },
+  { name: "Justice", meaning: "truth, fairness, law", response: "maybe" },
+  { name: "The Hanged Man", meaning: "sacrifice, release, perspective", response: "maybe" },
+  { name: "Death", meaning: "endings, transformation, transition", response: "no" },
+  { name: "Temperance", meaning: "balance, moderation, purpose", response: "yes" },
+  { name: "The Devil", meaning: "addiction, materialism, bondage", response: "no" },
+  { name: "The Tower", meaning: "disaster, upheaval, sudden change", response: "no" },
+  { name: "The Star", meaning: "hope, inspiration, renewal", response: "yes" },
+  { name: "The Moon", meaning: "illusion, fear, anxiety", response: "maybe" },
+  { name: "The Sun", meaning: "success, positivity, vitality", response: "yes" },
+  { name: "Judgement", meaning: "rebirth, inner calling, absolution", response: "yes" },
+  { name: "The World", meaning: "completion, achievement, travel", response: "yes" },
+  { name: "Ace of Cups", meaning: "love, compassion, creativity", response: "yes" },
+  { name: "Two of Cups", meaning: "connection, unity, attraction", response: "yes" },
+  { name: "Three of Cups", meaning: "celebration, friendship, community", response: "yes" },
+  { name: "Four of Cups", meaning: "apathy, contemplation, reevaluation", response: "maybe" },
+  { name: "Five of Cups", meaning: "loss, grief, disappointment", response: "no" },
+  { name: "Six of Cups", meaning: "nostalgia, reunion, innocence", response: "yes" },
+  { name: "Seven of Cups", meaning: "choices, illusion, fantasy", response: "maybe" },
+  { name: "Eight of Cups", meaning: "walking away, withdrawal, introspection", response: "maybe" },
+  { name: "Nine of Cups", meaning: "contentment, satisfaction, gratitude", response: "yes" },
+  { name: "Ten of Cups", meaning: "happiness, harmony, emotional fulfillment", response: "yes" },
+  { name: "Page of Cups", meaning: "imagination, curiosity, sensitivity", response: "yes" },
+  { name: "Knight of Cups", meaning: "romance, charm, imagination", response: "yes" },
+  { name: "Queen of Cups", meaning: "compassion, calm, comfort", response: "yes" },
+  { name: "King of Cups", meaning: "control, balance, generosity", response: "yes" },
+  { name: "Ace of Pentacles", meaning: "opportunity, prosperity, abundance", response: "yes" },
+  { name: "Two of Pentacles", meaning: "balance, adaptability, priorities", response: "maybe" },
+  { name: "Three of Pentacles", meaning: "teamwork, collaboration, growth", response: "yes" },
+  { name: "Four of Pentacles", meaning: "control, security, possession", response: "maybe" },
+  { name: "Five of Pentacles", meaning: "poverty, hardship, isolation", response: "no" },
+  { name: "Six of Pentacles", meaning: "generosity, charity, giving", response: "yes" },
+  { name: "Seven of Pentacles", meaning: "patience, investment, long-term view", response: "maybe" },
+  { name: "Eight of Pentacles", meaning: "apprenticeship, dedication, skill", response: "yes" },
+  { name: "Nine of Pentacles", meaning: "self-sufficiency, luxury, independence", response: "yes" },
+  { name: "Ten of Pentacles", meaning: "wealth, family, legacy", response: "yes" },
+  { name: "Page of Pentacles", meaning: "ambition, diligence, opportunity", response: "yes" },
+  { name: "Knight of Pentacles", meaning: "efficiency, responsibility, routine", response: "maybe" },
+  { name: "Queen of Pentacles", meaning: "nurturing, practicality, security", response: "yes" },
+  { name: "King of Pentacles", meaning: "abundance, leadership, security", response: "yes" },
+  { name: "Ace of Swords", meaning: "clarity, truth, breakthrough", response: "yes" },
+  { name: "Two of Swords", meaning: "indecision, choices, stalemate", response: "maybe" },
+  { name: "Three of Swords", meaning: "heartbreak, sorrow, grief", response: "no" },
+  { name: "Four of Swords", meaning: "rest, recovery, contemplation", response: "maybe" },
+  { name: "Five of Swords", meaning: "conflict, tension, defeat", response: "no" },
+  { name: "Six of Swords", meaning: "transition, change, rite of passage", response: "maybe" },
+  { name: "Seven of Swords", meaning: "betrayal, deception, strategy", response: "no" },
+  { name: "Eight of Swords", meaning: "restriction, limitation, fear", response: "no" },
+  { name: "Nine of Swords", meaning: "anxiety, fear, nightmares", response: "no" },
+  { name: "Ten of Swords", meaning: "painful endings, betrayal, loss", response: "no" },
+  { name: "Page of Swords", meaning: "curiosity, communication, mental energy", response: "maybe" },
+  { name: "Knight of Swords", meaning: "action, ambition, assertiveness", response: "maybe" },
+  { name: "Queen of Swords", meaning: "independence, perception, fairness", response: "maybe" },
+  { name: "King of Swords", meaning: "authority, intellect, truth", response: "maybe" },
+  { name: "Ace of Wands", meaning: "inspiration, new opportunities, growth", response: "yes" },
+  { name: "Two of Wands", meaning: "planning, progress, discovery", response: "maybe" },
+  { name: "Three of Wands", meaning: "expansion, foresight, overseas travel", response: "yes" },
+  { name: "Four of Wands", meaning: "celebration, harmony, home", response: "yes" },
+  { name: "Five of Wands", meaning: "conflict, competition, disagreement", response: "no" },
+  { name: "Six of Wands", meaning: "victory, success, recognition", response: "yes" },
+  { name: "Seven of Wands", meaning: "challenge, competition, defense", response: "maybe" },
+  { name: "Eight of Wands", meaning: "movement, speed, action", response: "yes" },
+  { name: "Nine of Wands", meaning: "resilience, boundaries, persistence", response: "maybe" },
+  { name: "Ten of Wands", meaning: "burden, responsibility, stress", response: "no" },
+  { name: "Page of Wands", meaning: "exploration, excitement, freedom", response: "yes" },
+  { name: "Knight of Wands", meaning: "passion, adventure, energy", response: "yes" },
+  { name: "Queen of Wands", meaning: "confidence, independence, warmth", response: "yes" },
+  { name: "King of Wands", meaning: "leadership, vision, boldness", response: "yes" }
 ];
 
 function drawCards(n = 3) {
@@ -93,19 +94,9 @@ function drawCards(n = 3) {
   return selected;
 }
 
-function isYes(card) {
-  const yesCards = ["The Sun", "The World", "The Star", "The Empress", "The Lovers", "Ace of Cups", "Ten of Cups", "Six of Wands", "Nine of Cups", "Judgement"];
-  return yesCards.includes(card.name);
-}
-
-function isNo(card) {
-  const noCards = ["The Tower", "The Devil", "Ten of Swords", "Three of Swords", "Five of Pentacles", "Eight of Swords", "Nine of Swords", "Death"];
-  return noCards.includes(card.name);
-}
-
 function yesOrNoFromCards(cards) {
-  const yes = cards.filter(isYes).length;
-  const no = cards.filter(isNo).length;
+  const yes = cards.filter(c => c.response === "yes").length;
+  const no = cards.filter(c => c.response === "no").length;
   if (yes > no) return "Yes";
   if (no > yes) return "No";
   return "Maybe";
@@ -114,41 +105,36 @@ function yesOrNoFromCards(cards) {
 function generateSpiritMessage(cards) {
   const [c1, c2, c3] = cards;
   const themes = [c1.meaning, c2.meaning, c3.meaning];
-
   const poeticMessage = [
     `You pulled ${c1.name}, ${c2.name}, and ${c3.name}.`,
     `A cycle is unfolding: ${themes[0]}, followed by ${themes[1]}, and finally ${themes[2]}.`,
     `Let this journey speak: from ${themes[0]} to ${themes[1]}, your spirit grows into ${themes[2]}.`,
     `Each card holds a whisper — ${c1.name} teaches you ${themes[0]}, ${c2.name} encourages ${themes[1]}, and ${c3.name} completes it with ${themes[2]}.`
   ];
-
-  const randomIndex = Math.floor(Math.random() * poeticMessage.length);
-  return poeticMessage[randomIndex];
+  return poeticMessage[Math.floor(Math.random() * poeticMessage.length)];
 }
 
 app.get('/tarot', (req, res) => {
   const question = req.query.question || '';
   const user = req.query.user || 'friend';
   const spirit = req.query.message === 'spirit' || req.query.command === '!spirits';
+  const cards = drawCards();
 
   if (spirit) {
-    const cards = drawCards();
     const message = generateSpiritMessage(cards);
-    res.send(`@${user} ${message}`);
-  } else {
-    const cards = drawCards();
-    const answer = yesOrNoFromCards(cards);
-
-    let reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
-    let response = `${answer}. ${reading}`;
-
-    if (answer === "Maybe") {
-      const msg = generateSpiritMessage(cards);
-      response += `\n✨ ${msg}`;
-    }
-
-    res.send(response);
+    return res.send(`@${user} ${message}`);
   }
+
+  const answer = yesOrNoFromCards(cards);
+  const reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
+  let response = `${answer}. ${reading}`;
+
+  if (answer === "Maybe") {
+    const msg = generateSpiritMessage(cards);
+    response += `\n✨ ${msg}`;
+  }
+
+  res.send(response);
 });
 
 app.get('/spirits', (req, res) => {
