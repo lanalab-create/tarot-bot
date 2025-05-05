@@ -92,72 +92,45 @@ function drawThreeCards() {
 
 // Spirits Message
 function generateSpiritsMessage(cards, user) {
-  const cardLines = cards.map(card => {
-    if (card.response === 'no') {
-      return `There’s something you need to release — the ${card.name} suggests it’s weighing on your spirit.`;
-    } else if (card.response === 'yes') {
-      return `The ${card.name} brings uplifting energy — trust in your own light and inner guidance.`;
-    } else {
-      return `The ${card.name} invites you inward — take time to feel what’s shifting beneath the surface.`;
-    }
-  });
+  const header = `@${user}\n`;
+  const meanings = cards.map(c => c.meaning.toLowerCase().replace(/[.]+$/, ''));
 
-  const messageLines = cardLines.slice(0, 3);
-  return `@${user}\n${messageLines.join('\n')}`;
+  const joined = `${meanings[0]}, ${meanings[1]} and ${meanings[2]}.`;
+  let paragraph = joined.charAt(0).toUpperCase() + joined.slice(1);
+
+  const maxLength = 400 - header.length;
+  if (paragraph.length > maxLength) {
+    paragraph = paragraph.slice(0, maxLength - 1).trim();
+    if (paragraph.endsWith(',')) paragraph = paragraph.slice(0, -1);
+    paragraph += '.';
+  }
+
+  return header + paragraph;
 }
+
 
 // Love Message (updated to fit 400 characters)
 // New Love Message Generator without rigid phrases
 function generateLoveMessage(cards, user) {
-  // Extract meanings of the cards
-  const cardMeanings = cards.map(card => card.meaning.toLowerCase());
-
-  // Generate a more intuitive, natural reading based on the card meanings
-  const loveMessage = [];
-  
-  // Check for themes and natural flow
-  if (cardMeanings.some(meaning => meaning.includes('emotion') || meaning.includes('love'))) {
-    loveMessage.push("Something significant is happening in your emotional life — love is in the air.");
-  }
-
-  if (cardMeanings.some(meaning => meaning.includes('choice') || meaning.includes('decision'))) {
-    loveMessage.push("It seems you're standing at a crossroads, with important decisions ahead.");
-  }
-
-  if (cardMeanings.some(meaning => meaning.includes('letting go') || meaning.includes('release'))) {
-    loveMessage.push("There might be things you need to release in order to make space for something new.");
-  }
-
-  if (cardMeanings.some(meaning => meaning.includes('new') || meaning.includes('growth'))) {
-    loveMessage.push("Opportunities for new beginnings are here — embrace them with an open heart.");
-  }
-
-  if (cardMeanings.some(meaning => meaning.includes('patience') || meaning.includes('time'))) {
-    loveMessage.push("Not everything happens overnight; trust the process and let things unfold naturally.");
-  }
-
-  // If there are no specific themes, just give a more general message
-  if (loveMessage.length === 0) {
-    loveMessage.push("Love is always evolving, and right now, it's asking you to stay open to whatever comes next.");
-  }
-
-  // Join the messages together in a flowing, organic way
-  const finalMessage = loveMessage.join(' ');
-
-  // Build the response ensuring it fits within the 400 character limit
   const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
-  const maxLength = 400 - header.length;
 
-  // Adjust to fit within the character limit
-  let finalResponse = '';
-  if (finalMessage.length <= maxLength) {
-    finalResponse = header + finalMessage;
-  } else {
-    const truncatedMessage = finalMessage.slice(0, maxLength).trim();
-    finalResponse = header + truncatedMessage;
+  const meanings = cards.map(c => c.meaning.toLowerCase().replace(/[.]+$/, ''));
+
+  const joined = `${meanings[0]}, ${meanings[1]} and ${meanings[2]}.`;
+
+  // Simplesmente transforma os significados em uma leitura fluida
+  let paragraph = joined.charAt(0).toUpperCase() + joined.slice(1);
+
+  // Garante que o texto total não passe de 400 caracteres (contando o header)
+  const maxLength = 400 - header.length;
+  if (paragraph.length > maxLength) {
+    paragraph = paragraph.slice(0, maxLength - 1).trim();
+    // Remove vírgula final se cortar no meio
+    if (paragraph.endsWith(',')) paragraph = paragraph.slice(0, -1);
+    paragraph += '.';
   }
 
-  return finalResponse;
+  return header + paragraph;
 }
 
 
@@ -191,6 +164,7 @@ app.get('/spirits', (req, res) => {
   const message = generateSpiritsMessage(cards, user);
   res.send(message);
 });
+
 
 // Love Route
 app.get('/love', (req, res) => {
