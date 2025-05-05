@@ -1,6 +1,5 @@
 // server.js
 const express = require('express');
-const axios = require('axios');  // Used for making requests to the OpenAI API
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -91,43 +90,29 @@ function drawThreeCards() {
   return shuffled.slice(0, 3);
 }
 
-// Spirits Message with OpenAI
-async function generateSpiritsMessage(cards, user) {
+// Spirits Message
+function generateSpiritsMessage(cards, user) {
   const header = `@${user}\n`;
 
   let message = "";
 
-  // Generate the message based on the cards
-  const cardNames = cards.map(c => c.name).join(', ');
-  const cardMeanings = cards.map(c => c.meaning).join(' ');
-
-  const prompt = `
-    Generate a spiritual message based on the following tarot cards:
-    ${cardNames}
-    Meanings: ${cardMeanings}
-    Message should be tailored to the user and offer guidance based on the tarot cards.
-  `;
-
-  try {
-    const response = await axios.post(
-      'https://api.openai.com/v1/completions',
-      {
-        model: 'text-davinci-003', // or any other model that works for your use case
-        prompt: prompt,
-        max_tokens: 200,
-        temperature: 0.7
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-        }
-      }
-    );
-
-    message = response.data.choices[0].text.trim();
-  } catch (error) {
-    console.error('Error generating spirits message:', error);
-    message = "Something went wrong while generating the message. Please try again later.";
+  // Check for specific card interactions to provide a unique spiritual message
+  if (cards.some(card => card.name === "The Fool") && cards.some(card => card.name === "The Star") && cards.some(card => card.name === "The Empress")) {
+    message = "You're being called to step forward with hope, trust, and confidence. Embrace the possibilities that the universe is offering you. Let the nurturing energy of The Empress guide you in nurturing your own dreams. It's time to take the first step towards manifesting your deepest desires.";
+  } 
+  else if (cards.some(card => card.name === "The Lovers") && cards.some(card => card.name === "The Moon") && cards.some(card => card.name === "Strength")) {
+    message = "Right now, you're facing decisions of the heart, and there may be moments of confusion. The Moon brings uncertainty, but Strength offers you the inner courage to confront these shadows. Trust your intuition and have faith in your ability to overcome doubts. Your heart knows the way.";
+  }
+  else if (cards.some(card => card.name === "The Magician") && cards.some(card => card.name === "The Tower") && cards.some(card => card.name === "The Hierophant")) {
+    message = "Change is upon you, but it’s not something to fear. The Tower may bring disruption, but The Magician reminds you that you have the power to rebuild. With the guidance of The Hierophant, this could be a time of spiritual awakening or deeper understanding of your path. Trust the process of transformation.";
+  }
+  else if (cards.some(card => card.name === "The Hermit") && cards.some(card => card.name === "The High Priestess") && cards.some(card => card.name === "The Wheel of Fortune")) {
+    message = "A time of introspection and spiritual growth is upon you. The Hermit calls for you to retreat within, while The High Priestess guides you to trust your intuition and uncover hidden truths. The Wheel of Fortune signals that change is on the horizon—embrace it with openness and wisdom.";
+  }
+  else {
+    // General spiritual message based on the three card meanings
+    message = cards.map(c => c.meaning).join(" ").trim();
+    message = message.charAt(0).toUpperCase() + message.slice(1); // Capitalize the first letter
   }
 
   // Ensure the message length doesn't exceed the maximum limit
@@ -140,6 +125,35 @@ async function generateSpiritsMessage(cards, user) {
 
   return header + message;
 }
+
+
+
+// Love Message (updated to fit 400 characters)
+// New Love Message Generator without rigid phrases
+function generateLoveMessage(cards, user) {
+  const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
+
+  const meanings = cards.map(c => c.meaning.toLowerCase().replace(/[.]+$/, ''));
+
+  const joined = `${meanings[0]}, ${meanings[1]} and ${meanings[2]}.`;
+
+  // Simplesmente transforma os significados em uma leitura fluida
+  let paragraph = joined.charAt(0).toUpperCase() + joined.slice(1);
+
+  // Garante que o texto total não passe de 400 caracteres (contando o header)
+  const maxLength = 400 - header.length;
+  if (paragraph.length > maxLength) {
+    paragraph = paragraph.slice(0, maxLength - 1).trim();
+    // Remove vírgula final se cortar no meio
+    if (paragraph.endsWith(',')) paragraph = paragraph.slice(0, -1);
+    paragraph += '.';
+  }
+
+  return header + paragraph;
+}
+
+
+
 
 // Tarot Yes/No Route
 app.get('/tarot', (req, res) => {
@@ -163,70 +177,22 @@ app.get('/tarot', (req, res) => {
 });
 
 // Spirits Route
-app.get('/spirits', async (req, res) => {
+app.get('/spirits', (req, res) => {
   const user = req.query.user || 'Seeker';
   const cards = drawThreeCards();
-  const message = await generateSpiritsMessage(cards, user);
+  const message = generateSpiritsMessage(cards, user);
   res.send(message);
 });
 
-// Love Route with OpenAI Integration
-async function generateLoveMessage(cards, user) {
-  const header = `@${user}\n`;
 
-  let message = "";
-
-  // Generate the message based on the cards
-  const cardNames = cards.map(c => c.name).join(', ');
-  const cardMeanings = cards.map(c => c.meaning).join(' ');
-
-  const prompt = `
-    Generate a love-related message based on the following tarot cards:
-    ${cardNames}
-    Meanings: ${cardMeanings}
-    Message should be tailored to the user and offer guidance related to love and relationships.
-  `;
-
-  try {
-    const response = await axios.post(
-      'https://api.openai.com/v1/completions',
-      {
-        model: 'text-davinci-003', // or any other model that works for your use case
-        prompt: prompt,
-        max_tokens: 200,
-        temperature: 0.7
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-        }
-      }
-    );
-
-    message = response.data.choices[0].text.trim();
-  } catch (error) {
-    console.error('Error generating love message:', error);
-    message = "Could not reach the spirits. Please try again.";
-  }
-
-  // Ensure the message length doesn't exceed the maximum limit
-  const maxLength = 400 - header.length;
-  if (message.length > maxLength) {
-    message = message.slice(0, maxLength - 1).trim();
-    if (message.endsWith(',')) message = message.slice(0, -1);
-    message += '.';
-  }
-
-  return header + message;
-}
-
-app.get('/love', async (req, res) => {
+// Love Route
+app.get('/love', (req, res) => {
   const user = req.query.user || 'Seeker';
   const cards = drawThreeCards();
-  const message = await generateLoveMessage(cards, user);
+  const message = generateLoveMessage(cards, user);
   res.send(message);
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Tarot API running on port ${PORT}`);
 });
