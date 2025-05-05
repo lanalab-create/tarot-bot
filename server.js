@@ -109,6 +109,7 @@ function generateSpiritsMessage(cards, user) {
 // Love Message (updated to fit 400 characters)
 // Love Message with varied responses based on drawn cards
 // Custom Love Message Generator
+// Custom Love Message Generator
 function generateLoveMessage(cards, user) {
   const themes = cards.map(card => card.meaning.toLowerCase());
 
@@ -150,11 +151,14 @@ function generateLoveMessage(cards, user) {
   const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
   const maxLength = 400 - header.length;
 
+  // Adjust to make sure final message fits within 400 characters
   let finalResponse = '';
   if (finalMessage.length <= maxLength) {
     finalResponse = header + finalMessage;
   } else {
-    finalResponse = header + finalMessage.slice(0, maxLength);  // Trim message if too long
+    // Truncate the message at a natural ending point if it exceeds the limit
+    const truncatedMessage = finalMessage.slice(0, maxLength).trim();
+    finalResponse = header + truncatedMessage;
   }
 
   return finalResponse;
