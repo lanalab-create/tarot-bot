@@ -109,35 +109,42 @@ function generateSpiritsMessage(cards, user) {
 // Love Message (updated to fit 400 characters)
 // Love Message with varied responses based on drawn cards
 function generateLoveMessage(cards, user) {
-  const cardNames = cards.map(c => c.name).join(', ');
+  const cardSentences = cards.map(card => {
+    const name = card.name;
+    const meaning = card.meaning.toLowerCase();
 
-  const keywords = cards.map(c => c.meaning.toLowerCase()).join(', ');
+    if (name.includes('Cups')) {
+      return `The ${name} brings emotional depth — ${meaning}.`;
+    } else if (name.includes('Swords')) {
+      return `The ${name} cuts through confusion — ${meaning}.`;
+    } else if (name.includes('Wands')) {
+      return `The ${name} sparks passion — ${meaning}.`;
+    } else if (name.includes('Pentacles')) {
+      return `The ${name} grounds your connections — ${meaning}.`;
+    } else if (name.startsWith('The')) {
+      return `Major energy from ${name} — ${meaning}.`;
+    } else {
+      return `The ${name} reveals: ${meaning}.`;
+    }
+  });
 
-  const emotionalCards = ['The Lovers', 'Two of Cups', 'Ten of Cups', 'Ace of Cups', 'The Empress'];
-  const challengingCards = ['The Tower', 'Five of Cups', 'Three of Swords', 'The Devil', 'Ten of Swords'];
-  const introspectiveCards = ['The Hermit', 'The Moon', 'High Priestess', 'Four of Cups', 'Seven of Cups'];
+  // Shuffle to vary the order
+  const shuffled = cardSentences.sort(() => 0.5 - Math.random());
 
-  let messageParts = [];
+  const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
+  const maxLength = 400 - header.length;
 
-  if (cards.some(c => emotionalCards.includes(c.name))) {
-    messageParts.push("Love is unfolding in beautiful ways — there’s real potential for joy, union, or reunion.");
+  // Add sentences until the limit is hit
+  let finalMessage = '';
+  for (const sentence of shuffled) {
+    if ((finalMessage + sentence).length <= maxLength) {
+      finalMessage += sentence + ' ';
+    } else {
+      break;
+    }
   }
 
-  if (cards.some(c => challengingCards.includes(c.name))) {
-    messageParts.push("Past wounds or toxic patterns may resurface — be honest with yourself and protect your heart.");
-  }
-
-  if (cards.some(c => introspectiveCards.includes(c.name))) {
-    messageParts.push("You're being called to reflect before acting — your intuition is your greatest ally right now.");
-  }
-
-  if (messageParts.length === 0) {
-    messageParts.push("A new chapter in love may be emerging — stay curious, open, and present to what develops.");
-  }
-
-  const finalMessage = messageParts[Math.floor(Math.random() * messageParts.length)];
-
-  return `@${user}\nLove reading: ${cardNames}.\n${finalMessage}`;
+  return header + finalMessage.trim();
 }
 
 
