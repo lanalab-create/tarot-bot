@@ -93,20 +93,39 @@ function drawThreeCards() {
 // Spirits Message
 function generateSpiritsMessage(cards, user) {
   const header = `@${user}\n`;
-  const meanings = cards.map(c => c.meaning.toLowerCase().replace(/[.]+$/, ''));
 
-  const joined = `${meanings[0]}, ${meanings[1]} and ${meanings[2]}.`;
-  let paragraph = joined.charAt(0).toUpperCase() + joined.slice(1);
+  let message = "";
 
-  const maxLength = 400 - header.length;
-  if (paragraph.length > maxLength) {
-    paragraph = paragraph.slice(0, maxLength - 1).trim();
-    if (paragraph.endsWith(',')) paragraph = paragraph.slice(0, -1);
-    paragraph += '.';
+  // Check for specific card interactions to provide a unique spiritual message
+  if (cards.some(card => card.name === "The Fool") && cards.some(card => card.name === "The Star") && cards.some(card => card.name === "The Empress")) {
+    message = "You're being called to step forward with hope, trust, and confidence. Embrace the possibilities that the universe is offering you. Let the nurturing energy of The Empress guide you in nurturing your own dreams. It's time to take the first step towards manifesting your deepest desires.";
+  } 
+  else if (cards.some(card => card.name === "The Lovers") && cards.some(card => card.name === "The Moon") && cards.some(card => card.name === "Strength")) {
+    message = "Right now, you're facing decisions of the heart, and there may be moments of confusion. The Moon brings uncertainty, but Strength offers you the inner courage to confront these shadows. Trust your intuition and have faith in your ability to overcome doubts. Your heart knows the way.";
+  }
+  else if (cards.some(card => card.name === "The Magician") && cards.some(card => card.name === "The Tower") && cards.some(card => card.name === "The Hierophant")) {
+    message = "Change is upon you, but it’s not something to fear. The Tower may bring disruption, but The Magician reminds you that you have the power to rebuild. With the guidance of The Hierophant, this could be a time of spiritual awakening or deeper understanding of your path. Trust the process of transformation.";
+  }
+  else if (cards.some(card => card.name === "The Hermit") && cards.some(card => card.name === "The High Priestess") && cards.some(card => card.name === "The Wheel of Fortune")) {
+    message = "A time of introspection and spiritual growth is upon you. The Hermit calls for you to retreat within, while The High Priestess guides you to trust your intuition and uncover hidden truths. The Wheel of Fortune signals that change is on the horizon—embrace it with openness and wisdom.";
+  }
+  else {
+    // General spiritual message based on the three card meanings
+    message = cards.map(c => c.meaning).join(" ").trim();
+    message = message.charAt(0).toUpperCase() + message.slice(1); // Capitalize the first letter
   }
 
-  return header + paragraph;
+  // Ensure the message length doesn't exceed the maximum limit
+  const maxLength = 400 - header.length;
+  if (message.length > maxLength) {
+    message = message.slice(0, maxLength - 1).trim();
+    if (message.endsWith(',')) message = message.slice(0, -1);
+    message += '.';
+  }
+
+  return header + message;
 }
+
 
 
 // Love Message (updated to fit 400 characters)
