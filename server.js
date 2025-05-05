@@ -84,66 +84,74 @@ const tarotCards = [
   { name: "King of Wands", meaning: "leadership, vision, boldness", response: "yes" }
 ];
 
-function drawCards(n = 3) {
-  const deck = [...tarotCards];
-  const selected = [];
-  for (let i = 0; i < n; i++) {
-    const index = Math.floor(Math.random() * deck.length);
-    selected.push(deck.splice(index, 1)[0]);
-  }
-  return selected;
+// Draw 3 random cards
+function drawThreeCards() {
+  const shuffled = tarotCards.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 3);
 }
 
-function yesOrNoFromCards(cards) {
-  const yes = cards.filter(c => c.response === "yes").length;
-  const no = cards.filter(c => c.response === "no").length;
-  if (yes > no) return "Yes";
-  if (no > yes) return "No";
-  return "Maybe";
+// Spirits Message
+function generateSpiritsMessage(cards, user) {
+  const cardLines = cards.map(card => {
+    if (card.response === 'no') {
+      return `There’s something you need to release — the ${card.name} suggests it’s weighing on your spirit.`;
+    } else if (card.response === 'yes') {
+      return `The ${card.name} brings uplifting energy — trust in your own light and inner guidance.`;
+    } else {
+      return `The ${card.name} invites you inward — take time to feel what’s shifting beneath the surface.`;
+    }
+  });
+
+  const messageLines = cardLines.slice(0, 3);
+  return `@${user}\n${messageLines.join('\n')}`;
 }
 
-function generateSpiritMessage(cards) {
-  const [c1, c2, c3] = cards;
-  const themes = [c1.meaning, c2.meaning, c3.meaning];
-  const poeticMessage = [
-    `You pulled ${c1.name}, ${c2.name}, and ${c3.name}.`,
-    `A cycle is unfolding: ${themes[0]}, followed by ${themes[1]}, and finally ${themes[2]}.`,
-    `Let this journey speak: from ${themes[0]} to ${themes[1]}, your spirit grows into ${themes[2]}.`,
-    `Each card holds a whisper — ${c1.name} teaches you ${themes[0]}, ${c2.name} encourages ${themes[1]}, and ${c3.name} completes it with ${themes[2]}.`
-  ];
-  return poeticMessage[Math.floor(Math.random() * poeticMessage.length)];
+// Love Message (updated to fit 400 characters)
+function generateLoveMessage(cards, user) {
+  const cardNames = cards.map(card => card.name).join(', ');
+
+  const message = `@${user}\nLove reading: ${cardNames}. There are emotions to explore, choices to be made, and deep connections awaiting. Let your heart guide you through what’s next.`;
+
+  return message;
 }
 
+// Tarot Yes/No Route
 app.get('/tarot', (req, res) => {
-  const question = req.query.question || '';
-  const user = req.query.user || 'friend';
-  const spirit = req.query.message === 'spirit' || req.query.command === '!spirits';
-  const cards = drawCards();
+  const user = req.query.user || 'Seeker';
+  const cards = drawThreeCards();
 
-  if (spirit) {
-    const message = generateSpiritMessage(cards);
-    return res.send(`@${user} ${message}`);
+  const combinedMeaning = cards.map(c => c.meaning).join(', ');
+  const yesCount = cards.filter(c => c.response === 'yes').length;
+  const noCount = cards.filter(c => c.response === 'no').length;
+
+  let result;
+  if (yesCount >= 2) {
+    result = "Yes";
+  } else if (noCount >= 2) {
+    result = "No";
+  } else {
+    result = "Maybe";
   }
 
-  const answer = yesOrNoFromCards(cards);
-  const reading = `${cards[0].name} speaks of ${cards[0].meaning}, ${cards[1].name} brings ${cards[1].meaning}, and ${cards[2].name} reflects ${cards[2].meaning}.`;
-  let response = `${answer}. ${reading}`;
-
-  if (answer === "Maybe") {
-    const msg = generateSpiritMessage(cards);
-    response += `\n✨ ${msg}`;
-  }
-
-  res.send(response);
+  res.send(`@${user}\n${result} — ${cards.map(c => c.name).join(', ')}.\n${combinedMeaning}`);
 });
 
+// Spirits Route
 app.get('/spirits', (req, res) => {
-  const user = req.query.user || 'friend';
-  const cards = drawCards();
-  const message = generateSpiritMessage(cards);
-  res.send(`@${user} ${message}`);
+  const user = req.query.user || 'Seeker';
+  const cards = drawThreeCards();
+  const message = generateSpiritsMessage(cards, user);
+  res.send(message);
+});
+
+// Love Route
+app.get('/love', (req, res) => {
+  const user = req.query.user || 'Seeker';
+  const cards = drawThreeCards();
+  const message = generateLoveMessage(cards, user);
+  res.send(message);
 });
 
 app.listen(PORT, () => {
-  console.log(`Tarot bot running on port ${PORT}`);
+  console.log(`Tarot API running on port ${PORT}`);
 });
