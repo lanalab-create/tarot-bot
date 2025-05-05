@@ -108,43 +108,56 @@ function generateSpiritsMessage(cards, user) {
 
 // Love Message (updated to fit 400 characters)
 // Love Message with varied responses based on drawn cards
+// Custom Love Message Generator
 function generateLoveMessage(cards, user) {
-  const cardSentences = cards.map(card => {
-    const name = card.name;
-    const meaning = card.meaning.toLowerCase();
+  const themes = cards.map(card => card.meaning.toLowerCase());
 
-    if (name.includes('Cups')) {
-      return `The ${name} brings emotional depth — ${meaning}.`;
-    } else if (name.includes('Swords')) {
-      return `The ${name} cuts through confusion — ${meaning}.`;
-    } else if (name.includes('Wands')) {
-      return `The ${name} sparks passion — ${meaning}.`;
-    } else if (name.includes('Pentacles')) {
-      return `The ${name} grounds your connections — ${meaning}.`;
-    } else if (name.startsWith('The')) {
-      return `Major energy from ${name} — ${meaning}.`;
-    } else {
-      return `The ${name} reveals: ${meaning}.`;
-    }
-  });
+  let sentence1 = "";
+  let sentence2 = "";
+  let sentence3 = "";
 
-  // Shuffle to vary the order
-  const shuffled = cardSentences.sort(() => 0.5 - Math.random());
+  // First Sentence - General emotional tone or insight
+  if (themes.some(meaning => meaning.includes('emotion') || meaning.includes('love'))) {
+    sentence1 = "A new emotional connection is forming, sparked by honest communication and clear intentions.";
+  } else if (themes.some(meaning => meaning.includes('clarity') || meaning.includes('truth'))) {
+    sentence1 = "Clarity and truth are key — what’s hidden is coming to light, offering the opportunity for honest connections.";
+  } else {
+    sentence1 = "Love is evolving, but it may require patience. There are deeper emotions at play, waiting to unfold.";
+  }
 
+  // Second Sentence - Action or development in the relationship
+  if (themes.some(meaning => meaning.includes('growth') || meaning.includes('change'))) {
+    sentence2 = "Stay grounded and open to small gestures — love may grow slowly but steadily.";
+  } else if (themes.some(meaning => meaning.includes('action') || meaning.includes('decision'))) {
+    sentence2 = "Bold actions are being taken, but be mindful — each step is leading you closer to meaningful growth.";
+  } else {
+    sentence2 = "This is a time for self-reflection and understanding, allowing your love life to develop naturally.";
+  }
+
+  // Third Sentence - The overall outlook or final advice
+  if (themes.some(meaning => meaning.includes('potential') || meaning.includes('opportunity'))) {
+    sentence3 = "This is a time for heartfelt truth, gentle curiosity, and meaningful progress.";
+  } else if (themes.some(meaning => meaning.includes('patience') || meaning.includes('stability'))) {
+    sentence3 = "The path ahead may not be quick, but it’s full of steady progress — allow things to unfold in their own time.";
+  } else {
+    sentence3 = "Embrace the opportunities that arise, and trust that the journey will bring you closer to emotional fulfillment.";
+  }
+
+  // Combine the sentences into a flowing response
+  const finalMessage = `${sentence1} ${sentence2} ${sentence3}`;
+
+  // Create the final response for the user
   const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
   const maxLength = 400 - header.length;
 
-  // Add sentences until the limit is hit
-  let finalMessage = '';
-  for (const sentence of shuffled) {
-    if ((finalMessage + sentence).length <= maxLength) {
-      finalMessage += sentence + ' ';
-    } else {
-      break;
-    }
+  let finalResponse = '';
+  if (finalMessage.length <= maxLength) {
+    finalResponse = header + finalMessage;
+  } else {
+    finalResponse = header + finalMessage.slice(0, maxLength);  // Trim message if too long
   }
 
-  return header + finalMessage.trim();
+  return finalResponse;
 }
 
 
