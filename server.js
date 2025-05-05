@@ -109,19 +109,37 @@ function generateSpiritsMessage(cards, user) {
 // Love Message (updated to fit 400 characters)
 // Love Message with varied responses based on drawn cards
 function generateLoveMessage(cards, user) {
-  const cardNames = cards.map(card => card.name).join(', ');
+  const cardNames = cards.map(c => c.name).join(', ');
 
-  // Create a more dynamic love message based on the cards drawn
-  const loveText = cards.some(card => card.name === 'The Lovers' || card.name === 'Two of Cups' || card.name === 'Ten of Cups')
-    ? "There is harmony and emotional fulfillment on the horizon. Your heart will lead you toward deep connections."
-    : cards.some(card => card.name === 'The Moon' || card.name === 'The Devil' || card.name === 'Five of Cups')
-    ? "Be cautious of illusions and unspoken fears in matters of love. Trust yourself and stay grounded."
-    : "Your path is filled with choices and challenges. Keep an open heart, and remember that love comes in many forms.";
+  const keywords = cards.map(c => c.meaning.toLowerCase()).join(', ');
 
-  const message = `@${user}\nLove reading: ${cardNames}. ${loveText}`;
+  const emotionalCards = ['The Lovers', 'Two of Cups', 'Ten of Cups', 'Ace of Cups', 'The Empress'];
+  const challengingCards = ['The Tower', 'Five of Cups', 'Three of Swords', 'The Devil', 'Ten of Swords'];
+  const introspectiveCards = ['The Hermit', 'The Moon', 'High Priestess', 'Four of Cups', 'Seven of Cups'];
 
-  return message;
+  let messageParts = [];
+
+  if (cards.some(c => emotionalCards.includes(c.name))) {
+    messageParts.push("Love is unfolding in beautiful ways — there’s real potential for joy, union, or reunion.");
+  }
+
+  if (cards.some(c => challengingCards.includes(c.name))) {
+    messageParts.push("Past wounds or toxic patterns may resurface — be honest with yourself and protect your heart.");
+  }
+
+  if (cards.some(c => introspectiveCards.includes(c.name))) {
+    messageParts.push("You're being called to reflect before acting — your intuition is your greatest ally right now.");
+  }
+
+  if (messageParts.length === 0) {
+    messageParts.push("A new chapter in love may be emerging — stay curious, open, and present to what develops.");
+  }
+
+  const finalMessage = messageParts[Math.floor(Math.random() * messageParts.length)];
+
+  return `@${user}\nLove reading: ${cardNames}.\n${finalMessage}`;
 }
+
 
 
 // Tarot Yes/No Route
