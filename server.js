@@ -107,62 +107,59 @@ function generateSpiritsMessage(cards, user) {
 }
 
 // Love Message (updated to fit 400 characters)
-// Love Message with varied responses based on drawn cards
-// Custom Love Message Generator
-// Custom Love Message Generator
+// New Love Message Generator without rigid phrases
 function generateLoveMessage(cards, user) {
-  const themes = cards.map(card => card.meaning.toLowerCase());
+  // Extract meanings of the cards
+  const cardMeanings = cards.map(card => card.meaning.toLowerCase());
 
-  let sentence1 = "";
-  let sentence2 = "";
-  let sentence3 = "";
-
-  // First Sentence - General emotional tone or insight
-  if (themes.some(meaning => meaning.includes('emotion') || meaning.includes('love'))) {
-    sentence1 = "A new emotional connection is forming, sparked by honest communication and clear intentions.";
-  } else if (themes.some(meaning => meaning.includes('clarity') || meaning.includes('truth'))) {
-    sentence1 = "Clarity and truth are key — what’s hidden is coming to light, offering the opportunity for honest connections.";
-  } else {
-    sentence1 = "Love is evolving, but it may require patience. There are deeper emotions at play, waiting to unfold.";
+  // Generate a more intuitive, natural reading based on the card meanings
+  const loveMessage = [];
+  
+  // Check for themes and natural flow
+  if (cardMeanings.some(meaning => meaning.includes('emotion') || meaning.includes('love'))) {
+    loveMessage.push("Something significant is happening in your emotional life — love is in the air.");
   }
 
-  // Second Sentence - Action or development in the relationship
-  if (themes.some(meaning => meaning.includes('growth') || meaning.includes('change'))) {
-    sentence2 = "Stay grounded and open to small gestures — love may grow slowly but steadily.";
-  } else if (themes.some(meaning => meaning.includes('action') || meaning.includes('decision'))) {
-    sentence2 = "Bold actions are being taken, but be mindful — each step is leading you closer to meaningful growth.";
-  } else {
-    sentence2 = "This is a time for self-reflection and understanding, allowing your love life to develop naturally.";
+  if (cardMeanings.some(meaning => meaning.includes('choice') || meaning.includes('decision'))) {
+    loveMessage.push("It seems you're standing at a crossroads, with important decisions ahead.");
   }
 
-  // Third Sentence - The overall outlook or final advice
-  if (themes.some(meaning => meaning.includes('potential') || meaning.includes('opportunity'))) {
-    sentence3 = "This is a time for heartfelt truth, gentle curiosity, and meaningful progress.";
-  } else if (themes.some(meaning => meaning.includes('patience') || meaning.includes('stability'))) {
-    sentence3 = "The path ahead may not be quick, but it’s full of steady progress — allow things to unfold in their own time.";
-  } else {
-    sentence3 = "Embrace the opportunities that arise, and trust that the journey will bring you closer to emotional fulfillment.";
+  if (cardMeanings.some(meaning => meaning.includes('letting go') || meaning.includes('release'))) {
+    loveMessage.push("There might be things you need to release in order to make space for something new.");
   }
 
-  // Combine the sentences into a flowing response
-  const finalMessage = `${sentence1} ${sentence2} ${sentence3}`;
+  if (cardMeanings.some(meaning => meaning.includes('new') || meaning.includes('growth'))) {
+    loveMessage.push("Opportunities for new beginnings are here — embrace them with an open heart.");
+  }
 
-  // Create the final response for the user
+  if (cardMeanings.some(meaning => meaning.includes('patience') || meaning.includes('time'))) {
+    loveMessage.push("Not everything happens overnight; trust the process and let things unfold naturally.");
+  }
+
+  // If there are no specific themes, just give a more general message
+  if (loveMessage.length === 0) {
+    loveMessage.push("Love is always evolving, and right now, it's asking you to stay open to whatever comes next.");
+  }
+
+  // Join the messages together in a flowing, organic way
+  const finalMessage = loveMessage.join(' ');
+
+  // Build the response ensuring it fits within the 400 character limit
   const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
   const maxLength = 400 - header.length;
 
-  // Adjust to make sure final message fits within 400 characters
+  // Adjust to fit within the character limit
   let finalResponse = '';
   if (finalMessage.length <= maxLength) {
     finalResponse = header + finalMessage;
   } else {
-    // Truncate the message at a natural ending point if it exceeds the limit
     const truncatedMessage = finalMessage.slice(0, maxLength).trim();
     finalResponse = header + truncatedMessage;
   }
 
   return finalResponse;
 }
+
 
 
 
