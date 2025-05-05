@@ -107,13 +107,22 @@ function generateSpiritsMessage(cards, user) {
 }
 
 // Love Message (updated to fit 400 characters)
+// Love Message with varied responses based on drawn cards
 function generateLoveMessage(cards, user) {
   const cardNames = cards.map(card => card.name).join(', ');
 
-  const message = `@${user}\nLove reading: ${cardNames}. There are emotions to explore, choices to be made, and deep connections awaiting. Let your heart guide you through what’s next.`;
+  // Create a more dynamic love message based on the cards drawn
+  const loveText = cards.some(card => card.name === 'The Lovers' || card.name === 'Two of Cups' || card.name === 'Ten of Cups')
+    ? "There is harmony and emotional fulfillment on the horizon. Your heart will lead you toward deep connections."
+    : cards.some(card => card.name === 'The Moon' || card.name === 'The Devil' || card.name === 'Five of Cups')
+    ? "Be cautious of illusions and unspoken fears in matters of love. Trust yourself and stay grounded."
+    : "Your path is filled with choices and challenges. Keep an open heart, and remember that love comes in many forms.";
+
+  const message = `@${user}\nLove reading: ${cardNames}. ${loveText}`;
 
   return message;
 }
+
 
 // Tarot Yes/No Route
 app.get('/tarot', (req, res) => {
