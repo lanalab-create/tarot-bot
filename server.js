@@ -388,8 +388,7 @@ const tarotCards = [
     keywords: "wealth, stability, success",
     sentence: "You are mastering the material world, achieving success and security.",
     response: "yes"
-  }
-
+  },
   {
     name: "Ace of Wands",
     keywords: "inspiration, new beginnings, creativity",
