@@ -537,12 +537,11 @@ function generateSpiritsMessage(cards, user) {
   return header + message;
 }
 
-// Love Message
-// Function to generate the Love Reading
+// Love Message Function
 function generateLoveReading() {
-  const drawnCards = drawCards();
+  const drawnCards = drawThreeCards(); // Use drawThreeCards here
   const cardNames = drawnCards.map(card => card.name).join(", ");
-  const loveReading = drawnCards.map(card => card.sentence).join(" ");
+  const loveReading = drawnCards.map(card => card.sentence).join(" "); // Ensure sentences are pulled from each card
 
   return { cardNames, loveReading };
 }
