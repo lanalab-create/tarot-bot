@@ -589,7 +589,7 @@ app.get('/love', (req, res) => {
   // Formatting the output for plain text (for YouTube chat)
   const loveMessage = `
 Love Reading:
-The cards drawn are: ${cardNames}
+cards: ${cardNames}
 Here is: ${loveReading}
 `;
 
