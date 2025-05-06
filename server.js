@@ -590,11 +590,13 @@ app.get('/love', (req, res) => {
   const loveMessage = `
     <h2>Love Reading:</h2>
     <p><strong>The cards drawn are:</strong> ${cardNames}</p>
-    <p><strong>Here is:</strong> ${loveReading}</p>
+    <p><strong>${loveReading}</strong></p>
   `;
   
+  res.setHeader('Content-Type', 'text/html'); // Ensure response is sent as HTML
   res.send(loveMessage); // Send the formatted message to the user
 });
+
 
 app.listen(PORT, () => {
   console.log(`Tarot API running on port ${PORT}`);
