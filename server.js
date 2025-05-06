@@ -1,6 +1,7 @@
 // server.js
 const express = require('express');
 const app = express();
+const loveTarotCards = require('./loveTarotCards');
 const PORT = process.env.PORT || 3000;
 
 const tarotCards = [
@@ -537,14 +538,19 @@ function generateSpiritsMessage(cards, user) {
   return header + message;
 }
 
-// Love Message Function
-function generateLoveReading() {
-  const drawnCards = drawThreeCards(); // Use drawThreeCards here
-  const cardNames = drawnCards.map(card => card.name).join(", ");
-  const loveReading = drawnCards.map(card => card.sentence).join(" "); // Ensure sentences are pulled from each card
 
-  return { cardNames, loveReading };
+function generateLoveReading(user) {
+  const shuffled = loveTarotCards.sort(() => 0.5 - Math.random());
+  const cards = shuffled.slice(0, 3);
+  const loveLines = cards.map(card => card.sentence);
+
+  // Create a 3-line romantic message
+  const message = `@${user}\n${loveLines[0]} ${loveLines[1]} ${loveLines[2]}`;
+
+  // Trim to 400 characters max
+  return message.length > 400 ? message.slice(0, 397) + '...' : message;
 }
+
 
 // Tarot Yes/No Route
 app.get('/tarot', (req, res) => {
@@ -582,28 +588,12 @@ app.get('/spirits', (req, res) => {
 });
 
 
-// Love Reading Route for YouTube chat
 app.get('/love', (req, res) => {
   const user = req.query.user || 'Seeker';
-  const { loveReading } = generateLoveReading();
-
-  // Limit to 400 characters max (including @user)
-  const header = `@${user} `;
-  const maxLength = 400 - header.length;
-  let message = loveReading;
-
-  if (message.length > maxLength) {
-    const cutPoint = message.lastIndexOf('.', maxLength);
-    if (cutPoint !== -1) {
-      message = message.slice(0, cutPoint + 1);
-    } else {
-      const fallbackCut = message.lastIndexOf(' ', maxLength);
-      message = message.slice(0, fallbackCut !== -1 ? fallbackCut : maxLength).trim() + '.';
-    }
-  }
-
-  res.send(header + message);
+  const message = generateLoveReading(user);
+  res.send(message);
 });
+
 
 
 
