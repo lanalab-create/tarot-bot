@@ -582,20 +582,20 @@ app.get('/spirits', (req, res) => {
 });
 
 
-// Love Reading Route
+// Love Reading Route for YouTube chat
 app.get('/love', (req, res) => {
   const { cardNames, loveReading } = generateLoveReading();
 
-  // Formatting the output
+  // Formatting the output for plain text (for YouTube chat)
   const loveMessage = `
-    <h2>Love Reading:</h2>
-    <p><strong>The cards drawn are:</strong> ${cardNames}</p>
-    <p><strong>${loveReading}</strong></p>
-  `;
-  
-  res.setHeader('Content-Type', 'text/html'); // Ensure response is sent as HTML
-  res.send(loveMessage); // Send the formatted message to the user
+Love Reading:
+The cards drawn are: ${cardNames}
+Here is: ${loveReading}
+`;
+
+  res.send(loveMessage); // Send the plain text message to the user
 });
+
 
 
 app.listen(PORT, () => {
