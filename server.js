@@ -323,11 +323,12 @@ const tarotCards = [
     response: "yes"
   },
   {
-    name: "Four of Pentacles",
-    keywords: "security, control, possessiveness",
-    sentence: "You're focused on securing your resources, but avoid being too controlling.",
-    response: "maybe"
-  },
+  name: "Four of Pentacles",
+  keywords: "security, control, holding on",
+  sentence: "You're clinging to stability, but true security comes from trust.",
+  response: "maybe"
+}
+
   {
     name: "Five of Pentacles",
     keywords: "loss, hardship, struggle",
