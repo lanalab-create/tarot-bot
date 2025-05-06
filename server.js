@@ -91,12 +91,13 @@ function drawThreeCards() {
 }
 
 // Spirits Message
+// Spirits Message
 function generateSpiritsMessage(cards, user) {
   const header = `@${user}\n`;
 
   let message = "";
 
-  // Check for specific card interactions to provide a unique spiritual message
+  // Specific combo messages
   if (cards.some(card => card.name === "The Fool") && cards.some(card => card.name === "The Star") && cards.some(card => card.name === "The Empress")) {
     message = "You're being called to step forward with hope, trust, and confidence. Embrace the possibilities that the universe is offering you. Let the nurturing energy of The Empress guide you in nurturing your own dreams. It's time to take the first step towards manifesting your deepest desires.";
   } 
@@ -110,12 +111,10 @@ function generateSpiritsMessage(cards, user) {
     message = "A time of introspection and spiritual growth is upon you. The Hermit calls for you to retreat within, while The High Priestess guides you to trust your intuition and uncover hidden truths. The Wheel of Fortune signals that change is on the horizon—embrace it with openness and wisdom.";
   }
   else {
-    // General spiritual message based on the three card meanings
-    message = cards.map(c => c.meaning).join(" ").trim();
-    message = message.charAt(0).toUpperCase() + message.slice(1); // Capitalize the first letter
+    const interpretation = `${cards[0].meaning}. Then, ${cards[1].meaning.toLowerCase()}. Finally, ${cards[2].meaning.toLowerCase()}.`;
+    message = interpretation.charAt(0).toUpperCase() + interpretation.slice(1);
   }
 
-  // Ensure the message length doesn't exceed the maximum limit
   const maxLength = 400 - header.length;
   if (message.length > maxLength) {
     message = message.slice(0, maxLength - 1).trim();
@@ -130,26 +129,22 @@ function generateSpiritsMessage(cards, user) {
 
 // Love Message (updated to fit 400 characters)
 // New Love Message Generator without rigid phrases
+// Love Message (interpreted reading from 3 cards)
 function generateLoveMessage(cards, user) {
   const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
 
-  const meanings = cards.map(c => c.meaning.toLowerCase().replace(/[.]+$/, ''));
+  const interpretation = `${cards[0].meaning}. Then, ${cards[1].meaning.toLowerCase()}. Finally, ${cards[2].meaning.toLowerCase()}.`;
 
-  const joined = `${meanings[0]}, ${meanings[1]} and ${meanings[2]}.`;
+  let message = interpretation.charAt(0).toUpperCase() + interpretation.slice(1);
 
-  // Simplesmente transforma os significados em uma leitura fluida
-  let paragraph = joined.charAt(0).toUpperCase() + joined.slice(1);
-
-  // Garante que o texto total não passe de 400 caracteres (contando o header)
   const maxLength = 400 - header.length;
-  if (paragraph.length > maxLength) {
-    paragraph = paragraph.slice(0, maxLength - 1).trim();
-    // Remove vírgula final se cortar no meio
-    if (paragraph.endsWith(',')) paragraph = paragraph.slice(0, -1);
-    paragraph += '.';
+  if (message.length > maxLength) {
+    message = message.slice(0, maxLength - 1).trim();
+    if (message.endsWith(',')) message = message.slice(0, -1);
+    message += '.';
   }
 
-  return header + paragraph;
+  return header + message;
 }
 
 
