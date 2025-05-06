@@ -590,7 +590,7 @@ app.get('/love', (req, res) => {
   const loveMessage = `
     <h2>Love Reading:</h2>
     <p><strong>The cards drawn are:</strong> ${cardNames}</p>
-    <p><strong>Here's your love reading interpretation:</strong> ${loveReading}</p>
+    <p><strong>Here is:</strong> ${loveReading}</p>
   `;
   
   res.send(loveMessage); // Send the formatted message to the user
