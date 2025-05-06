@@ -538,34 +538,13 @@ function generateSpiritsMessage(cards, user) {
 }
 
 // Love Message
-function generateLoveMessage(cards, user) {
-  const header = `@${user}\nLove reading: ${cards.map(c => c.name).join(', ')}.\n`;
+// Function to generate the Love Reading
+function generateLoveReading() {
+  const drawnCards = drawCards();
+  const cardNames = drawnCards.map(card => card.name).join(", ");
+  const loveReading = drawnCards.map(card => card.sentence).join(" ");
 
-  let message = "";
-  
-  // Love-based interpretation (based on card energy)
-  if (cards.some(card => card.name === "The Lovers") || cards.some(card => card.name === "Ace of Cups")) {
-    message = "A powerful love energy surrounds you. Embrace new emotional connections or deepen the bond with a current partner. Trust the love that is blossoming.";
-  }
-  else if (cards.some(card => card.name === "The Devil") && cards.some(card => card.name === "The Hanged Man")) {
-    message = "You're being challenged in love to break free from unhealthy patterns. The Hanged Man advises a pause to gain perspective, while The Devil warns against feeling trapped. Release what no longer serves you.";
-  }
-  else if (cards.some(card => card.name === "The Lovers") && cards.some(card => card.name === "Strength") && cards.some(card => card.name === "Two of Cups")) {
-    message = "Love is blooming, but it requires inner strength and patience. The Lovers and Strength together call for a deep commitment, while the Two of Cups promises mutual affection and understanding.";
-  }
-  else {
-    const interpretation = `${cards[0].sentence}. Then, ${cards[1].sentence.toLowerCase()}. Finally, ${cards[2].sentence.toLowerCase()}.`;
-    message = interpretation.charAt(0).toUpperCase() + interpretation.slice(1);
-  }
-
-  const maxLength = 400 - header.length;
-  if (message.length > maxLength) {
-    message = message.slice(0, maxLength - 1).trim();
-    if (message.endsWith(',')) message = message.slice(0, -1);
-    message += '.';
-  }
-
-  return header + message;
+  return { cardNames, loveReading };
 }
 
 // Tarot Yes/No Route
@@ -604,12 +583,18 @@ app.get('/spirits', (req, res) => {
 });
 
 
-// Love Route
+// Love Reading Route
 app.get('/love', (req, res) => {
-  const user = req.query.user || 'Seeker';
-  const cards = drawThreeCards();
-  const message = generateLoveMessage(cards, user);
-  res.send(message);
+  const { cardNames, loveReading } = generateLoveReading();
+
+  // Formatting the output
+  const loveMessage = `
+    <h2>Love Reading:</h2>
+    <p><strong>The cards drawn are:</strong> ${cardNames}</p>
+    <p><strong>Here's your love reading interpretation:</strong> ${loveReading}</p>
+  `;
+  
+  res.send(loveMessage); // Send the formatted message to the user
 });
 
 app.listen(PORT, () => {
