@@ -584,17 +584,27 @@ app.get('/spirits', (req, res) => {
 
 // Love Reading Route for YouTube chat
 app.get('/love', (req, res) => {
-  const { cardNames, loveReading } = generateLoveReading();
+  const user = req.query.user || 'Seeker';
+  const { loveReading } = generateLoveReading();
 
-  // Formatting the output for plain text (for YouTube chat)
-  const loveMessage = `
-Love Reading:
-cards: ${cardNames}
-Here is: ${loveReading}
-`;
+  // Limit to 400 characters max (including @user)
+  const header = `@${user} `;
+  const maxLength = 400 - header.length;
+  let message = loveReading;
 
-  res.send(loveMessage); // Send the plain text message to the user
+  if (message.length > maxLength) {
+    const cutPoint = message.lastIndexOf('.', maxLength);
+    if (cutPoint !== -1) {
+      message = message.slice(0, cutPoint + 1);
+    } else {
+      const fallbackCut = message.lastIndexOf(' ', maxLength);
+      message = message.slice(0, fallbackCut !== -1 ? fallbackCut : maxLength).trim() + '.';
+    }
+  }
+
+  res.send(header + message);
 });
+
 
 
 
