@@ -519,7 +519,7 @@ function generateSpiritsMessage(cards, user) {
 
   // Default message
   if (!message) {
-    const interpretation = `${cards[0].sentence}. Then, ${cards[1].sentence.toLowerCase()}. Finally, ${cards[2].sentence.toLowerCase()}.`;
+    const interpretation = `${cards[0].sentence}. ${cards[1].sentence.toLowerCase()}. ${cards[2].sentence.toLowerCase()}.`;
     message = interpretation.charAt(0).toUpperCase() + interpretation.slice(1);
   }
 
