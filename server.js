@@ -551,6 +551,14 @@ function generateLoveReading(user) {
   return message.length > 400 ? message.slice(0, 397) + '...' : message;
 }
 
+function generateGeneralReading() {
+  const shuffled = tarotCards.sort(() => 0.5 - Math.random());
+  const selected = shuffled.slice(0, 3);
+  const message = selected.map(card => card.sentence).join(' ');
+  return { cards: selected.map(c => c.name), message };
+}
+
+
 
 // Tarot Yes/No Route
 app.get('/tarot', (req, res) => {
@@ -595,6 +603,10 @@ app.get('/love', (req, res) => {
 });
 
 
+app.get('/general', (req, res) => {
+  const reading = generateGeneralReading();
+  res.json(reading);
+});
 
 
 
