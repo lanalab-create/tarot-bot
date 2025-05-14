@@ -604,9 +604,15 @@ app.get('/love', (req, res) => {
 
 
 app.get('/general', (req, res) => {
-  const reading = generateGeneralReading();
-  res.json(reading);
+  const user = req.query.user || 'Querent';
+  const cards = drawThreeCards();
+  const cardNames = cards.map(card => card.name).join(', ');
+  const message = generateGeneralReading(cards);
+
+  const fullResponse = `@${user}\n${cardNames}\n${message}`;
+  res.send(fullResponse);
 });
+
 
 
 
