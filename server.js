@@ -551,14 +551,13 @@ function generateLoveReading(user) {
   return message.length > 400 ? message.slice(0, 397) + '...' : message;
 }
 
-
-// Function to generate the general reading
-function generateGeneral() {
-  const selectedCards = getRandomCards();
-  const reading = selectedCards.map(card => `${card.sentence} (${card.name})`).join(' ');
-
-  return reading;
+function generateGeneralReading() {
+  const shuffled = tarotCards.sort(() => 0.5 - Math.random());
+  const selected = shuffled.slice(0, 3);
+  const message = selected.map(card => card.sentence).join(' '); // join them as a single string
+  return message; // Return only the combined message, no extra properties
 }
+
 
 
 
@@ -605,13 +604,10 @@ app.get('/love', (req, res) => {
 });
 
 
-
-// General Route
 app.get('/general', (req, res) => {
-  const generalReading = generateGeneral();
-  res.json({ reading: generalReading });
+  const reading = generateGeneralReading();
+  res.json(reading);
 });
-
 
 
 
